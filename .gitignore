@@ -1,0 +1,13 @@
+.idea/
+# public/uploads
+# public/Uploads
+# public/ueditor
+# public/access_token
+
+# database/*
+*.sql
+composer.lock
+*.log
+thinkphp/*
+config/database.php
+*tmp
