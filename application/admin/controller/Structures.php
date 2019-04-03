@@ -116,7 +116,7 @@ class Structures extends ApiCommon
     {
         $structureModel = model('Structure');
         $param = $this->param;
-        dump($param);die();
+        dump($param);
 		if(!$param['pid']){
 			resultArray(['error' => '请选择上级部门']);
 		}
