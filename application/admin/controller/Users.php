@@ -102,7 +102,6 @@ class Users extends ApiCommon
     {
         $userModel = model('User');
         $param = $this->param;
-        dump($param);die();
         $userInfo = $this->userInfo;
         if (!$param['id']) {
             //修改个人信息
