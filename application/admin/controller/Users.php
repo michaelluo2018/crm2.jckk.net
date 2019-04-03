@@ -85,6 +85,7 @@ class Users extends ApiCommon
     {
         $userModel = model('User');
         $param = $this->param;
+        dump($param);die();
 		$userInfo = $this->userInfo;
         $data = $userModel->createData($param);
         if (!$data) {
