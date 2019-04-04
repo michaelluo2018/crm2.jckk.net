@@ -35,6 +35,7 @@ class UserField extends Model
             $this->error = '参数错误';
             return false;
         }
+        echo "1";die();
         $data = [];
         if ($id) {
             $resInfo = $this->where(['id' => $id])->find();

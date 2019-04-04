@@ -27,7 +27,6 @@ class Config extends Common
 	public function updateConfig($param)
 	{
 		$where = $param['name'];
-		dump($where);die();
 		$data['value'] = $param['value'] ? : 0;
 		if ($this->where($where)->update($data)) {
 			return true;
