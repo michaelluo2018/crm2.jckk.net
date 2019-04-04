@@ -58,6 +58,7 @@ class Field extends Model
         	$map['types_id'] = $param['types_id'];
         }
         $list = Db::name('AdminField')->where($map)->order('order_id')->select();
+        dump($list);die();
         foreach ($list as $k=>$v) {
         	$list[$k]['setting'] = $v['setting'] ? explode(chr(10),$v['setting']) : [];
         	if ($v['form_type'] == 'checkbox') {
