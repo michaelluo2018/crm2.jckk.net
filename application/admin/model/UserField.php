@@ -52,10 +52,12 @@ class UserField extends Model
             $valueData[$v['field']]['width'] = $v['width'];
             $valueData[$v['field']]['is_hide'] = 0;
         }
-        //隐藏列
-        foreach ($param['hide_value'] as $k=>$v) {
-            $valueData[$v['field']]['width'] = $v['width'];
-            $valueData[$v['field']]['is_hide'] = 1;
+        if(!empty($parm['hide_value'])){
+            //隐藏列
+            foreach ($param['hide_value'] as $k=>$v) {
+                $valueData[$v['field']]['width'] = $v['width'];
+                $valueData[$v['field']]['is_hide'] = 1;
+            }
         }
         $data['datas'] = $valueData;
         if ($resInfo) {
