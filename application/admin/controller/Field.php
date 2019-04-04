@@ -304,7 +304,6 @@ class Field extends ApiCommon
         $userInfo = $this->userInfo;
         $param['user_id'] = $userInfo['id'];
         $userFieldModel = model('UserField');
-        dump($param['types']);die();
         $res = $userFieldModel->updateConfig($param['types'], $param);
         if (!$res) {
             return resultArray(['error' => $userFieldModel->getError()]);
