@@ -126,7 +126,6 @@ class Contract extends Common
 					->join('__CRM_BUSINESS__ business','contract.business_id = business.business_id','LEFT')
 					->join('__CRM_CONTACTS__ contacts','contract.contacts_id = contacts.contacts_id','LEFT')		
         			->where($map)->where($partMap)->where($authMap)->count('contract_id');
-        dump($list);die();
         foreach ($list as $k=>$v) {
         	$list[$k]['create_user_id_info'] = isset($v['create_user_id']) ? $userModel->getUserById($v['create_user_id']) : [];
         	$list[$k]['owner_user_id_info'] = isset($v['owner_user_id']) ? $userModel->getUserById($v['owner_user_id']) : [];
