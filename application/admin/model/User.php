@@ -107,7 +107,6 @@ class User extends Common
 				->order($exp)
 				->order('user.id asc')
 				->select();
-		dump($dataCount);die();
 		foreach ($list as $k=>$v) {
 			//直属上级
 			$list[$k]['status_name'] = $v['status']=='1'?'启用':'禁用';
