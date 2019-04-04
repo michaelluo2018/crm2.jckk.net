@@ -301,8 +301,8 @@ class Field extends ApiCommon
     public function config()
     {
         $param = $this->param;
-        dump($param);die();
         $userInfo = $this->userInfo;
+        dump($userInfo);die();
         $param['user_id'] = $userInfo['id'];
         $userFieldModel = model('UserField');
         $res = $userFieldModel->updateConfig($param['types'], $param);
