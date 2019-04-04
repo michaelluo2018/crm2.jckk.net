@@ -31,7 +31,7 @@ class UserField extends Model
      */
     public function updateConfig($types, $param, $id = '')
     {
-        dump(is_array($param['hide_value']));die();
+        dump($param['hide_value']);die();
         if (!is_array($param['value']) || !is_array($param['hide_value'])) {
             $this->error = '参数错误';
             return false;
