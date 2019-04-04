@@ -31,11 +31,11 @@ class UserField extends Model
      */
     public function updateConfig($types, $param, $id = '')
     {
-        echo "1";die();
         if (!is_array($param['value']) || !is_array($param['hide_value'])) {
             $this->error = '参数错误';
             return false;
         }
+        echo "1";die();
         $data = [];
         if ($id) {
             $resInfo = $this->where(['id' => $id])->find();
