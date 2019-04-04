@@ -8,6 +8,7 @@
 *.sql
 composer.lock
 *.log
+runtime/*
 thinkphp/*
 config/database.php
 *tmp
