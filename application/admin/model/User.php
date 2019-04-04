@@ -282,7 +282,6 @@ class User extends Common
 			$data['email'] = $param['email'];
 			$data['sex'] = $param['sex'];
 			$data['mobile'] = $param['username'];
-			$data['ename'] = $param['ename'];
 			if (db('admin_user')->where(['username' => $param['username'],'id' => ['neq',$param['user_id']]])->find()) {
 				$this->error = '手机号已存在';
 				return false;				
@@ -290,6 +289,7 @@ class User extends Common
 			Db::name('HrmUserDet')->where(['user_id' => $param['user_id']])->update($data);
 			$data['realname'] = $param['realname'];
 			$data['username'] = $param['username'];
+			$data['ename'] = $param['ename'];
 			$flag = $this->where(['id' => $param['user_id']])->update($data);
 			if ($flag) {
 				return true;
