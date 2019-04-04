@@ -120,8 +120,7 @@ class Users extends ApiCommon
         }
 
         $param['userInfo'] = $userInfo;
-        $resSync = model('Sync')->syncData($param);        
-
+        $resSync = model('Sync')->syncData($param);
         return resultArray(['data' => '编辑成功']);
     }    
 

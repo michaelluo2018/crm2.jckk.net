@@ -286,6 +286,7 @@ class User extends Common
 				$this->error = '手机号已存在';
 				return false;				
 			}
+			dump($data);die();
 			Db::name('HrmUserDet')->where(['user_id' => $param['user_id']])->update($data);
 			$data['realname'] = $param['realname'];
 			$data['username'] = $param['username'];
