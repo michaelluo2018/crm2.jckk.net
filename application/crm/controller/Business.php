@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------
-// | Description: 商机
+// | Description: 项目
 // +----------------------------------------------------------------------
 // | Author: Michael_xu | gengxiaoxu@5kcrm.com 
 // +----------------------------------------------------------------------
@@ -35,7 +35,7 @@ class Business extends ApiCommon
     } 
 
     /**
-     * 商机列表
+     * 项目列表
      * @author Michael_xu
      * @return
      */
@@ -50,7 +50,7 @@ class Business extends ApiCommon
     }
 
     /**
-     * 添加商机
+     * 添加项目
      * @author Michael_xu
      * @param 
      * @return 
@@ -71,7 +71,7 @@ class Business extends ApiCommon
     }
 
     /**
-     * 商机详情
+     * 项目详情
      * @author Michael_xu
      * @param  
      * @return
@@ -93,7 +93,7 @@ class Business extends ApiCommon
             header('Content-Type:application/json; charset=utf-8');
             exit(json_encode(['code'=>102,'error'=>'无权操作']));
         }        
-        //商机状态组
+        //项目状态组
         $data['status_list'] = $businessStatusModel->getDataById($data['type_id']);
         if (!$data) {
             return resultArray(['error' => $businessModel->getError()]);
@@ -102,7 +102,7 @@ class Business extends ApiCommon
     }
 
     /**
-     * 编辑商机
+     * 编辑项目
      * @author Michael_xu
      * @param 
      * @return
@@ -131,7 +131,7 @@ class Business extends ApiCommon
     }
 
     /**
-     * 删除商机（逻辑删）
+     * 删除项目（逻辑删）
      * @author Michael_xu
      * @param 
      * @return
@@ -158,12 +158,12 @@ class Business extends ApiCommon
             $data = $businessModel->getDataById($v);
             if (!$data) {
                 $isDel = false;
-                $errorMessage[] = 'id为'.$v.'的商机删除失败,错误原因：'.$businessModel->getError();
+                $errorMessage[] = 'id为'.$v.'的项目删除失败,错误原因：'.$businessModel->getError();
                 continue;
             }
             if (!in_array($data['owner_user_id'],$auth_user_ids)) {
                 $isDel = false;
-                $errorMessage[] = '名称为'.$data['name'].'的商机删除失败,错误原因：无权操作';
+                $errorMessage[] = '名称为'.$data['name'].'的项目删除失败,错误原因：无权操作';
                 continue;
             }
             $delIds[] = $v;            
@@ -185,7 +185,7 @@ class Business extends ApiCommon
     }
 
     /**
-     * 符合条件的商机状态组
+     * 符合条件的项目状态组
      * @author Michael_xu
      * @param 
      * @return
@@ -205,7 +205,7 @@ class Business extends ApiCommon
     }          
     
     /**
-     * 商机转移
+     * 项目转移
      * @author Michael_xu
      * @param owner_user_id 变更负责人
      * @param is_remove 1移出，2转为团队成员
@@ -225,7 +225,7 @@ class Business extends ApiCommon
             return resultArray(['error' => '变更负责人不能为空']);
         }
         if (!$param['business_id'] || !is_array($param['business_id'])) {
-            return resultArray(['error' => '请选择需要转移的商机']); 
+            return resultArray(['error' => '请选择需要转移的项目']); 
         }
         
         $is_remove = $param['is_remove'] == 2 ? : 1;
@@ -241,7 +241,7 @@ class Business extends ApiCommon
             $businessInfo = $businessModel->getDataById($business_id);
 
             if (!$businessInfo) {
-                $errorMessage[] = 'id:为'.$business_id.'的商机转移失败，错误原因：数据不存在；';
+                $errorMessage[] = 'id:为'.$business_id.'的项目转移失败，错误原因：数据不存在；';
                 continue;
             }
             //权限判断
@@ -255,7 +255,7 @@ class Business extends ApiCommon
                 continue;
             }
             //修改记录
-            updateActionLog($userInfo['id'], 'crm_business', $business_id, '', '', '将商机转移给：'.$ownerUserName);       
+            updateActionLog($userInfo['id'], 'crm_business', $business_id, '', '', '将项目转移给：'.$ownerUserName);       
         }
         if (!$errorMessage) {
             return resultArray(['data' => '转移成功']);
@@ -305,10 +305,10 @@ class Business extends ApiCommon
     }  
 
     /**
-     * 商机状态推进
+     * 项目状态推进
      * @author Michael_xu
-     * @param business_id 商机ID
-     * @param status_id 推进商机状态ID
+     * @param business_id 项目ID
+     * @param status_id 推进项目状态ID
      * @return
      */ 
     public function advance()

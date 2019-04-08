@@ -117,7 +117,7 @@ class Log extends Common
 			$param['type'] = 'oa_log';
 			$list[$k]['replyList'] = $commonModel->read($param);
 			$relation = Db::name('OaLogRelation')->where(['log_id' => $v['log_id']])->find();
-			$list[$k]['businessList'] = $relation['business_ids'] ? $BusinessModel->getDataByStr($relation['business_ids']) : []; //商机
+			$list[$k]['businessList'] = $relation['business_ids'] ? $BusinessModel->getDataByStr($relation['business_ids']) : []; //项目
 			$list[$k]['contactsList'] = $relation['contacts_ids'] ? $ContactsModel->getDataByStr($relation['contacts_ids']) : []; //联系人
 			$list[$k]['contractList'] = $relation['contract_ids'] ? $ContractModel->getDataByStr($relation['contract_ids']) : []; //合同
 			$list[$k]['customerList'] = $relation['customer_ids'] ? $CustomerModel->getDataByStr($relation['customer_ids']) : []; //客户
@@ -225,7 +225,7 @@ class Log extends Common
 			
 			$relation = Db::name('OaLogRelation')->where(['log_id' => $log_id])->find();
 			$BusinessModel = new \app\crm\model\Business();
-			$data['businessList'] = $relation['business_ids'] ? $BusinessModel->getDataByStr($relation['business_ids']) : []; //商机
+			$data['businessList'] = $relation['business_ids'] ? $BusinessModel->getDataByStr($relation['business_ids']) : []; //项目
 			$ContactsModel = new \app\crm\model\Contacts();
 			$data['contactsList'] = $relation['contacts_ids'] ? $ContactsModel->getDataByStr($relation['contacts_ids']) : []; //联系人
 			$ContractModel = new \app\crm\model\Contract();
@@ -329,7 +329,7 @@ class Log extends Common
 		
 		$relation = Db::name('OaLogRelation')->where('log_id ='.$id)->find();
 		$BusinessModel = new \app\crm\model\Business();
-		$dataInfo['BusinessList'] = $relation['business_ids'] ? $BusinessModel->getDataByStr($relation['business_ids']) : []; //商机
+		$dataInfo['BusinessList'] = $relation['business_ids'] ? $BusinessModel->getDataByStr($relation['business_ids']) : []; //项目
 		$ContactsModel = new \app\crm\model\Contacts();
 		$dataInfo['ContactsList'] = $relation['contacts_ids'] ? $ContactsModel->getDataByStr($relation['contacts_ids']) : []; //联系人
 		$ContractModel = new \app\crm\model\Contract();

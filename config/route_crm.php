@@ -42,7 +42,7 @@ return [
 	'crm/customer/statistics' => ['crm/customer/statistics', ['method' => 'POST']],
 	// 【客户】合同
 	'crm/customer/contract' => ['crm/customer/contract', ['method' => 'POST']],	
-	// 【客户】商机
+	// 【客户】项目
 	'crm/customer/business' => ['crm/customer/business', ['method' => 'POST']],	
 	// 【客户】删除
 	'crm/customer/delete' => ['crm/customer/delete', ['method' => 'POST']],	
@@ -92,25 +92,25 @@ return [
 	// 【联系人】删除
 	'crm/contacts/delete' => ['crm/contacts/delete', ['method' => 'POST']],						
 
-	// 【商机】列表
+	// 【项目】列表
 	'crm/business/index' => ['crm/business/index', ['method' => 'POST']],
-	// 【商机】创建
+	// 【项目】创建
 	'crm/business/save' => ['crm/business/save', ['method' => 'POST']],
-	// 【商机】编辑
+	// 【项目】编辑
 	'crm/business/update' => ['crm/business/update', ['method' => 'POST']],	
-	// 【商机】详情
+	// 【项目】详情
 	'crm/business/read' => ['crm/business/read', ['method' => 'POST']],		
-	// 【商机】状态组
+	// 【项目】状态组
 	'crm/business/statusList' => ['crm/business/statusList', ['method' => 'POST']],	
-	// 【商机】转移
+	// 【项目】转移
 	'crm/business/transfer' => ['crm/business/transfer', ['method' => 'POST']],	
-	// 【商机】相关产品
+	// 【项目】相关产品
 	'crm/business/product' => ['crm/business/product', ['method' => 'POST']],
-	// 【商机】商机状态推进
+	// 【项目】项目状态推进
 	'crm/business/advance' => ['crm/business/advance', ['method' => 'POST']],	
-	// 【商机】漏斗
+	// 【项目】漏斗
 	'crm/business/funnel' => ['crm/business/funnel', ['method' => 'POST']],	
-	// 【商机】删除
+	// 【项目】删除
 	'crm/business/delete' => ['crm/business/delete', ['method' => 'POST']],				
 
 	// 【合同】列表
@@ -184,17 +184,17 @@ return [
 	// 【客户保护规则】详情
 	'crm/setting/configData' => ['crm/setting/configData', ['method' => 'POST']],			
 
-	// 【商机状态组】列表
+	// 【项目状态组】列表
 	'crm/business_status/type' => ['crm/business_status/type', ['method' => 'POST']],
-	// 【商机状态组】创建
+	// 【项目状态组】创建
 	'crm/business_status/save' => ['crm/business_status/save', ['method' => 'POST']],
-	// 【商机状态组】编辑
+	// 【项目状态组】编辑
 	'crm/business_status/update' => ['crm/business_status/update', ['method' => 'POST']],
-	// 【商机状态组】详情
+	// 【项目状态组】详情
 	'crm/business_status/read' => ['crm/business_status/read', ['method' => 'POST']],		
-	// 【商机状态组】停用
+	// 【项目状态组】停用
 	'crm/business_status/enables' => ['crm/business_status/enables', ['method' => 'POST']],
-	// 【商机状态组】删除
+	// 【项目状态组】删除
 	'crm/business_status/delete' => ['crm/business_status/delete', ['method' => 'POST']],	
 
 	// 【产品分类】列表

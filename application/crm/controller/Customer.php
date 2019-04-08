@@ -203,13 +203,13 @@ class Customer extends ApiCommon
                 $errorMessage[] = '名称为'.$data['name'].'的客户删除失败,错误原因：无权操作';
                 continue;
             }
-            //有商机、合同、联系人则不能删除 
+            //有项目、合同、联系人则不能删除 
             $resBusiness = db('crm_business')->where(['customer_id' => $v])->find();
             $resContract = db('crm_contract')->where(['customer_id' => $v])->find();
             $resContacts = db('crm_contacts')->where(['customer_id' => $v])->find();
             if ($resBusiness) {
                 $isDel = false;
-                $errorMessage[] = '名称为'.$data['name'].'的客户删除失败,错误原因：客户下存在商机，不能删除';
+                $errorMessage[] = '名称为'.$data['name'].'的客户删除失败,错误原因：客户下存在项目，不能删除';
                 continue;
             }    
             if ($resContract) {
@@ -291,7 +291,7 @@ class Customer extends ApiCommon
                 }                
             }            
 
-            //商机、合同转移
+            //项目、合同转移
             if (in_array('crm_business',$types)) {
                 $businessIds = [];
                 $businessIds = db('crm_business')->where(['customer_id' => $customer_id])->column('business_id');

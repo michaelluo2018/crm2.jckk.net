@@ -121,7 +121,7 @@ class Excel extends Common
 			case 'crm_customer' : $types_name = '客户信息'; break;
 			case 'crm_contacts' : $types_name = '联系人信息'; break;
 			case 'crm_product' : $types_name = '产品信息'; break;
-			case 'crm_bbusiness' : $types_name = '商机信息'; break;
+			case 'crm_bbusiness' : $types_name = '项目信息'; break;
 			case 'crm_contract' : $types_name = '合同信息'; break;
 			case 'crm_receivables' : $types_name = '回款信息'; break;
 			default : $types_name = 'CRM系统'; break;

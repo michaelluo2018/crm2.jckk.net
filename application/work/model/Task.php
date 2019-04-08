@@ -207,7 +207,7 @@ class Task extends Common
 		$data['subTaskList'] = $subtasktemp;
 		$relation = Db::name('TaskRelation')->where('task_id ='.$id)->find();
 		$BusinessModel = new \app\crm\model\Business();
-		$data['businessList'] = $relation['business_ids']?$BusinessModel->getDataByStr($relation['business_ids']):''; //商机
+		$data['businessList'] = $relation['business_ids']?$BusinessModel->getDataByStr($relation['business_ids']):''; //项目
 		$ContactsModel = new \app\crm\model\Contacts();
 		$data['contactsList'] = $relation['contacts_ids']?$ContactsModel->getDataByStr($relation['contacts_ids']):''; //联系人
 		$ContractModel = new \app\crm\model\Contract();

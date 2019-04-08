@@ -117,7 +117,7 @@ class Examine extends Common
 			//关联业务
 			$relation = [];
 			$relation = db('oa_examine_relation')->where(['examine_id' => $v['examine_id']])->find();
-			$list[$k]['businessList'] = $relation['business_ids'] ? $businessModel->getDataByStr($relation['business_ids']) : []; //商机
+			$list[$k]['businessList'] = $relation['business_ids'] ? $businessModel->getDataByStr($relation['business_ids']) : []; //项目
 			$list[$k]['contactsList'] = $relation['contacts_ids'] ? $contactsModel->getDataByStr($relation['contacts_ids']) : []; //联系人
 			$list[$k]['contractList'] = $relation['contract_ids'] ? $contractModel->getDataByStr($relation['contract_ids']) : []; //合同
 			$list[$k]['customerList'] = $relation['customer_ids'] ? $customerModel->getDataByStr($relation['customer_ids']) : []; //客户
@@ -369,7 +369,7 @@ class Examine extends Common
         $contractModel = new \app\crm\model\Contract();
         $customerModel = new \app\crm\model\Customer();
 		$relation = Db::name('OaExamineRelation')->where('examine_id ='.$id)->find();
-		$dataInfo['businessList'] = $relation['business_ids'] ? $businessModel->getDataByStr($relation['business_ids']) : []; //商机
+		$dataInfo['businessList'] = $relation['business_ids'] ? $businessModel->getDataByStr($relation['business_ids']) : []; //项目
 		$dataInfo['contactsList'] = $relation['contacts_ids'] ? $contactsModel->getDataByStr($relation['contacts_ids']) : []; //联系人
 		$dataInfo['contractList'] = $relation['contract_ids'] ? $contractModel->getDataByStr($relation['contract_ids']) : []; //合同
 		$dataInfo['customerList'] = $relation['customer_ids'] ? $customerModel->getDataByStr($relation['customer_ids']) : []; //客户  

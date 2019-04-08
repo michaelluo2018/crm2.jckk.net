@@ -82,8 +82,8 @@ class Index extends ApiCommon
         $where['create_time'] = array('between',$between_time);
         $customerNum = 0; //录入客户
         $contactsNum = 0; //新增联系人
-        $businessNum = 0; //新增商机
-        $businessStatusNum = 0; //阶段变化的商机
+        $businessNum = 0; //新增项目
+        $businessStatusNum = 0; //阶段变化的项目
         $contractNum = 0; //新增合同
         $recordNum = 0; //新增跟进记录
         $receivablesNum = 0; //新增回款

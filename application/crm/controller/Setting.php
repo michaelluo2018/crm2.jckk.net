@@ -175,14 +175,14 @@ class Setting extends ApiCommon
                     }
                     continue;
                 case 'crm_business' : 
-                    $typesName = '商机';
+                    $typesName = '项目';
                     $businessModel = new \app\crm\model\Business();
                     $dataInfo = db('crm_business')->where(['business_id' => $v])->find();
                     //判断权限
                     $auth_user_ids = $userModel->getUserByPer('crm', 'business', 'teamSave');
                     if (!in_array($dataInfo['owner_user_id'],$auth_user_ids)) {
                         $error = true;
-                        $errorMessage[] = "商机'".$dataInfo['name']."'操作失败，错误原因：无权操作";
+                        $errorMessage[] = "项目'".$dataInfo['name']."'操作失败，错误原因：无权操作";
                     }                          
                     continue;
                 case 'crm_contract' : 

@@ -167,7 +167,7 @@ class Customer extends Common
 			foreach ($structureField as $key => $val) {
         		$list[$k][$val.'_info'] = isset($v[$val]) ? $structureModel->getDataByStr($v[$val]) : [];
         	} 
-        	//商机数
+        	//项目数
         	$list[$k]['business_count'] = db('crm_business')->where(['customer_id' => $v['customer_id']])->count() ? : 0;
         	//距进入公海天数
         	if ($paramPool['config'] == 1 && $requestData['a'] !== 'pool') {
