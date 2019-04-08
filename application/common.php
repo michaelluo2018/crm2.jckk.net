@@ -685,7 +685,7 @@ function utf8_strlen($string = null) {
  * @author Michael_xu
  * @return 
  */
-function checkVerify($saftCode = '5kcrm@'){
+function checkVerify($saftCode = 'crm@'){
     $parmList = Request::instance()->post();
     $header = $request->header();
     $parmList['sessionId'] = $header['sessionId'];

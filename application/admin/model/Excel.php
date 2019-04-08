@@ -54,13 +54,13 @@ class Excel extends Common
         $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);        
 
 		$objProps = $objPHPExcel->getProperties(); // 设置excel文档的属性
-		$objProps->setCreator("5kcrm"); //创建人
-		$objProps->setLastModifiedBy("5kcrm"); //最后修改人
-		$objProps->setTitle("5kcrm"); //标题
-		$objProps->setSubject("5kcrm data"); //题目
-		$objProps->setDescription("5kcrm data"); //描述
-		$objProps->setKeywords("5kcrm data"); //关键字
-		$objProps->setCategory("5kcrm"); //种类
+		$objProps->setCreator("crm"); //创建人
+		$objProps->setLastModifiedBy("crm"); //最后修改人
+		$objProps->setTitle("crm"); //标题
+		$objProps->setSubject("crm data"); //题目
+		$objProps->setDescription("crm data"); //描述
+		$objProps->setKeywords("crm data"); //关键字
+		$objProps->setCategory("crm"); //种类
 		$objPHPExcel->setActiveSheetIndex(0); //设置当前的sheet
 		$objActSheet = $objPHPExcel->getActiveSheet();
 		$objActSheet->setTitle('CRM系统导入模板'.date('Y-m-d',time())); //设置sheet的标题	

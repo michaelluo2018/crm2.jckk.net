@@ -735,7 +735,7 @@ class Customer extends ApiCommon
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         ob_end_clean();
         header("Content-Type: application/vnd.ms-excel;");
-        header("Content-Disposition:attachment;filename=5kcrm_customer.xls");
+        header("Content-Disposition:attachment;filename=crm_customer.xls");
         header("Pragma:no-cache");
         header("Expires:0");
         $objWriter->save('php://output');
