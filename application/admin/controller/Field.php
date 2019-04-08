@@ -97,7 +97,6 @@ class Field extends ApiCommon
             return resultArray(['error' => '系统审批类型暂不支持编辑']);
         }
         $data = $param['data'];
-        halt($data);die();
         $saveParam = [];
         $updateParam = [];
         $delParam = [];
@@ -119,6 +118,7 @@ class Field extends ApiCommon
                 $saveParam[$k]['types_id'] = $types_id;
             }
         }
+        halt($delParam);die();
         $errorMessage = [];
         //新增
         if ($saveParam) {
