@@ -1,7 +1,7 @@
 var form = {
   databaseUrl: 'localhost',
   databasePort: '3306',
-  databaseTable: '5kcrm_',
+  databaseTable: 'crm_',
   databasePwd: '',
   databaseUser: 'root'
 };

@@ -349,7 +349,7 @@ class Leads extends ApiCommon
         $fieldModel = new \app\admin\model\Field();
         $field_list = $fieldModel->getIndexFieldList('crm_leads', $userInfo['id']);
         // 文件名
-        $file_name = '5kcrm_leads_'.date('Ymd');
+        $file_name = 'crm_leads_'.date('Ymd');
         $param['pageType'] = 'all'; 
         $excelModel->exportCsv($file_name, $field_list, function($page) use ($param){
             $list = model('Leads')->getDataList($param);
