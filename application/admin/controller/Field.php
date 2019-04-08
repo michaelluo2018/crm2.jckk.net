@@ -118,7 +118,6 @@ class Field extends ApiCommon
                 $saveParam[$k]['types_id'] = $types_id;
             }
         }
-        halt($delParam);die();
         $errorMessage = [];
         //新增
         if ($saveParam) {
