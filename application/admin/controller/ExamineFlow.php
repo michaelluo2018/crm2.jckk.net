@@ -277,6 +277,7 @@ class ExamineFlow extends ApiCommon
         $where['user.status'] = ['gt',0];
         $where['pageType'] = 'all';
         $userList = $userModel->getDataList($where);
+        dump($userList);die();
         return resultArray(['data' => $userList['list']]);
     } 
 
