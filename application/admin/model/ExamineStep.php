@@ -29,7 +29,6 @@ class ExamineStep extends Common
     {
         $userModel = new \app\admin\model\User();
         $list = $this->where(['flow_id' => $flow_id])->order('order_id asc')->select();
-        halt($list);
         foreach ($list as $k=>$v) {
             $list[$k]['user_id_info'] = $userModel->getListByStr($v['user_id']);
         }
