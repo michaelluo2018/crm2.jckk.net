@@ -60,6 +60,7 @@ class User extends Common
 	public function getDataList($request)
 	{
 		$request = $this->fmtRequest( $request );
+		halt($request);
 		$fieldarray = ['search','group_id','structure_id','status','type','page','limit'];
 		$map = $request['map'] ? : [];
 		if (isset($map['search']) && $map['search']) {
