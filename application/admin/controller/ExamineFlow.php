@@ -265,7 +265,6 @@ class ExamineFlow extends ApiCommon
     public function userList()
     {
         $param = $this->param;
-        halt($param);
         $userInfo = $this->userInfo;
         $types = $param['types'];
         $examineStepModel = model('ExamineStep');
@@ -278,6 +277,7 @@ class ExamineFlow extends ApiCommon
         $where['user.status'] = ['gt',0];
         $where['pageType'] = 'all';
         $userList = $userModel->getDataList($where);
+        halt($userList);
         return resultArray(['data' => $userList['list']]);
     } 
 
