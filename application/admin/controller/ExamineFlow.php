@@ -265,7 +265,6 @@ class ExamineFlow extends ApiCommon
     public function userList()
     {
         $param = $this->param;
-        dump($param);die();
         $userInfo = $this->userInfo;
         $types = $param['types'];
         $examineStepModel = model('ExamineStep');
