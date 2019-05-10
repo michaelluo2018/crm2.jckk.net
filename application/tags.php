@@ -29,6 +29,6 @@ return [
     'app_end'      => [],
     //权限判断
     'check_auth'   => [
-        'app\\common\\behavior\\AuthenticateBehavior'      
+        'app\\common\\behavior\\AuthenticateBehavior'
     ]
 ];
