@@ -64,7 +64,7 @@ class ExamineFlow extends Common
         $data = [];
         $data['list'] = $list;
         $data['dataCount'] = $dataCount ? : 0;
-
+        halt($data);
         return $data;
     }
 
