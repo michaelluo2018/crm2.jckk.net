@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | Description: 商业智能-回款分析
 // +----------------------------------------------------------------------
-// | Author: Michael_xu | gengxiaoxu@5kcrm.com 
+// | 
 // +----------------------------------------------------------------------
 
 namespace app\bi\controller;
@@ -97,5 +97,5 @@ class Receivables extends ApiCommon
         $chartParam['userIds'] = $userIds ? : [];
         $chartList = $receivablesModel->getStatistics($chartParam); //柱状图
         return resultArray(['data' => $chartList]);
-    }   
+    }
 }

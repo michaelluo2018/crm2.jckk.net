@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | Description: 商业智能-业绩目标
 // +----------------------------------------------------------------------
-// | Author: Michael_xu | gengxiaoxu@5kcrm.com 
+// | 
 // +----------------------------------------------------------------------
 
 namespace app\bi\controller;
@@ -39,7 +39,7 @@ class Achievement extends ApiCommon
      */
     public function statistics()
     {
-        if (!checkPerByAction('bi', 'achievement' , 'read')) {
+        if (!checkPerByAction('bi', 'achievement', 'read')) {
             header('Content-Type:application/json; charset=utf-8');
             exit(json_encode(['code'=>102,'error'=>'无权操作']));
         }        
@@ -47,5 +47,5 @@ class Achievement extends ApiCommon
         $achievementModel = new \app\crm\model\Achievement();
         $list = $achievementModel->getList($param) ? : [];
         return resultArray(['data'=>$list]);
-    }    
+    }
 }

@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | Description: OA工作台
 // +----------------------------------------------------------------------
-// | Author: Michael_xu | gengxiaoxu@5kcrm.com 
+// | 
 // +----------------------------------------------------------------------
 
 namespace app\oa\controller;
@@ -55,7 +55,7 @@ class Index extends ApiCommon
 		} elseif ($param['type'] == 3) { //公告
 			$where = ' controller_name = "announcement" and  module_name = "oa" ';
 		} elseif ($param['type'] == 4) { //任务
-			$where = ' ( controller_name = "task" and  module_name = "work" ) ';
+			$where = ' ( controller_name = "task" and  module_name = "oa" ) ';
 		} elseif ($param['type'] == 5) { //审批
 			$where = ' ( controller_name = "examine" and  module_name = "oa" ) ';			
 		} else { //全部

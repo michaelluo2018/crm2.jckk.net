@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Description: 项目组
+// | Description: 商机组
 // +----------------------------------------------------------------------
-// | Author:  Michael_xu | gengxiaoxu@5kcrm.com
+// | 
 // +----------------------------------------------------------------------
 namespace app\crm\model;
 
@@ -20,19 +20,23 @@ class BusinessStatus extends Common
 	protected $name = 'crm_business_status';
 
 	/**
-     * [getDataList 项目状态list]
+     * [getDataList 商机状态list]
      * @author Michael_xu
-     * @param  type_id  项目组ID
+     * @param  type_id  商机组ID
      * @return 
      */		
-	public function getDataList($type_id)
+	public function getDataList($type_id, $type = 0)
     {  	
-    	$list = db('crm_business_status')->where(['type_id' => $type_id])->order('order_id asc')->select();
+    	if ($type == 1) {
+    		$list = db('crm_business_status')->where(['type_id' => $type_id])->whereOr(['type_id' => 0])->order('order_id asc')->select();
+    	} else {
+    		$list = db('crm_business_status')->where(['type_id' => $type_id])->order('order_id asc')->select();
+    	}
         return $list ? : [];
     }
 
 	/**
-     * [getTypeList 项目组list]
+     * [getTypeList 商机组list]
      * @author Michael_xu
      * @param     [string]                   $map [查询条件]
      * @param     [number]                   $page     [当前页数]
@@ -69,7 +73,7 @@ class BusinessStatus extends Common
     }    
 
 	/**
-	 * 创建项目组
+	 * 创建商机组
 	 * @author Michael_xu
 	 * @param  
 	 * @return                            
@@ -77,11 +81,11 @@ class BusinessStatus extends Common
 	public function createData($param)
 	{
 		if (!$param['name']) {
-			$this->error = '请填写项目组名称';
+			$this->error = '请填写商机组名称';
 			return false;
 		}
 		if (!$param['status']) {
-			$this->error = '请至少配置一个项目阶段';
+			$this->error = '请至少配置一个商机阶段';
 			return false;			
 		}
 		$data = [];
@@ -114,9 +118,9 @@ class BusinessStatus extends Common
 	}
 
 	/**
-	 * 编辑项目组信息
+	 * 编辑商机组信息
 	 * @author Michael_xu
-	 * @param  type_id 项目组类型ID
+	 * @param  type_id 商机组类型ID
 	 * @return                            
 	 */	
 	public function updateDataById($param, $type_id = '')
@@ -133,11 +137,11 @@ class BusinessStatus extends Common
 		}
 		
 		if (!$param['name']) {
-			$this->error = '请填写项目组名称';
+			$this->error = '请填写商机组名称';
 			return false;
 		}
 		if (!$param['status']) {
-			$this->error = '请至少配置一个项目阶段';
+			$this->error = '请至少配置一个商机阶段';
 			return false;			
 		}
 
@@ -193,8 +197,8 @@ class BusinessStatus extends Common
 	}
 
 	/**
-     * 项目组数据
-     * @param  $status_id 项目组ID
+     * 商机组数据
+     * @param  $status_id 商机组ID
      * @return 
      */	
    	public function getDataById($type_id = '')

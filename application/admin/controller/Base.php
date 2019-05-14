@@ -22,21 +22,26 @@ class Base extends Common
         $password = $param['password'];
         $verifyCode = !empty($param['verifyCode'])? $param['verifyCode']: '';
         $isRemember = !empty($param['isRemember'])? $param['isRemember']: '';
-        $type = $param['type'] ? : '';
-        $data = $userModel->login($username, $password, $verifyCode, $isRemember, $type, $authKey);
-
+        $is_mobile = $param['is_mobile'] ? : '';
+        $data = $userModel->login($username, $password, $verifyCode, $isRemember, $type, $authKey, $is_mobile);
+        
         Session::set('user_id', $data['userInfo']['id']);
         if (!$data) {
             return resultArray(['error' => $userModel->getError()]);
         }
         return resultArray(['data' => $data]);
-    }
+    }     
 
     //退出登录
     public function logout()
     {
+        $param = $this->param;
         $header = Request::instance()->header();
-        cache('Auth_'.$header['authkey'], null);
+        if ($param['mobile'] == 1) {
+            cache('Auth_'.$header['authkey'].'mobile', null);
+        } else {
+            cache('Auth_'.$header['authkey'], null);
+        }
         session('null', 'admin');
         session('admin','null');
         session('user_id','null');
@@ -50,14 +55,14 @@ class Base extends Common
         return $captcha->entry();
     }
 
-    //网站信息
+	//网站信息
     public function index()
-    {
+    {   
         $systemModel = model('System');
         $data = $systemModel->getDataList();
         return  resultArray(['data' => $data]);
-    }
-
+    }    
+	
     // miss 路由：处理没有匹配到的路由规则
     public function miss()
     {
@@ -68,3 +73,4 @@ class Base extends Common
         }
     }
 }
+ 

@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | Description: 字段列表配置
 // +----------------------------------------------------------------------
-// | Author:  Michael_xu | gengxiaoxu@5kcrm.com
+// | 
 // +----------------------------------------------------------------------
 namespace app\admin\model;
 
@@ -31,7 +31,7 @@ class UserField extends Model
      */
     public function updateConfig($types, $param, $id = '')
     {
-        if (!is_array($param['value']) || (!is_array($param['hide_value']) && !empty($parm['hide_value']))) {
+        if (!is_array($param['value']) || ($param['hide_value'] && !is_array($param['hide_value']))) {
             $this->error = '参数错误';
             return false;
         }
@@ -48,17 +48,21 @@ class UserField extends Model
         //处理value
         $valueData = [];
         //展示列
-        foreach ($param['value'] as $k=>$v) {
-            $valueData[$v['field']]['width'] = $v['width'];
-            $valueData[$v['field']]['is_hide'] = 0;
+        if ($param['value']) {
+            foreach ($param['value'] as $k=>$v) {
+                $valueData[$v['field']]['width'] = $v['width'];
+                $valueData[$v['field']]['is_hide'] = 0;
+            }
         }
-        if(!empty($parm['hide_value'])){
-            //隐藏列
+        
+        //隐藏列
+        if ($param['hide_value']) {
             foreach ($param['hide_value'] as $k=>$v) {
                 $valueData[$v['field']]['width'] = $v['width'];
                 $valueData[$v['field']]['is_hide'] = 1;
             }
         }
+        
         $data['datas'] = $valueData;
         if ($resInfo) {
             $data['id'] = $resInfo['id'];

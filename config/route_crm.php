@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | Description: 基础框架路由配置文件
 // +----------------------------------------------------------------------
-// | Author: Michael_xu <gengxiaoxu@5kcrm.com>
+// | 
 // +----------------------------------------------------------------------
 
 return [
@@ -42,7 +42,7 @@ return [
 	'crm/customer/statistics' => ['crm/customer/statistics', ['method' => 'POST']],
 	// 【客户】合同
 	'crm/customer/contract' => ['crm/customer/contract', ['method' => 'POST']],	
-	// 【客户】项目
+	// 【客户】商机
 	'crm/customer/business' => ['crm/customer/business', ['method' => 'POST']],	
 	// 【客户】删除
 	'crm/customer/delete' => ['crm/customer/delete', ['method' => 'POST']],	
@@ -90,27 +90,33 @@ return [
 	// 【联系人】转移
 	'crm/contacts/transfer' => ['crm/contacts/transfer', ['method' => 'POST']],	
 	// 【联系人】删除
-	'crm/contacts/delete' => ['crm/contacts/delete', ['method' => 'POST']],						
+	'crm/contacts/delete' => ['crm/contacts/delete', ['method' => 'POST']],
+	// 【联系人】导出
+	'crm/contacts/excelExport' => ['crm/contacts/excelExport', ['method' => 'POST']],
+	// 【联系人】导入模板下载
+	'crm/contacts/excelDownload' => ['crm/contacts/excelDownload', ['method' => 'GET']],
+	// 【联系人】导入
+	'crm/contacts/excelImport' => ['crm/contacts/excelImport', ['method' => 'POST']],						
 
-	// 【项目】列表
+	// 【商机】列表
 	'crm/business/index' => ['crm/business/index', ['method' => 'POST']],
-	// 【项目】创建
+	// 【商机】创建
 	'crm/business/save' => ['crm/business/save', ['method' => 'POST']],
-	// 【项目】编辑
+	// 【商机】编辑
 	'crm/business/update' => ['crm/business/update', ['method' => 'POST']],	
-	// 【项目】详情
+	// 【商机】详情
 	'crm/business/read' => ['crm/business/read', ['method' => 'POST']],		
-	// 【项目】状态组
+	// 【商机】状态组
 	'crm/business/statusList' => ['crm/business/statusList', ['method' => 'POST']],	
-	// 【项目】转移
+	// 【商机】转移
 	'crm/business/transfer' => ['crm/business/transfer', ['method' => 'POST']],	
-	// 【项目】相关产品
+	// 【商机】相关产品
 	'crm/business/product' => ['crm/business/product', ['method' => 'POST']],
-	// 【项目】项目状态推进
+	// 【商机】商机状态推进
 	'crm/business/advance' => ['crm/business/advance', ['method' => 'POST']],	
-	// 【项目】漏斗
+	// 【商机】漏斗
 	'crm/business/funnel' => ['crm/business/funnel', ['method' => 'POST']],	
-	// 【项目】删除
+	// 【商机】删除
 	'crm/business/delete' => ['crm/business/delete', ['method' => 'POST']],				
 
 	// 【合同】列表
@@ -145,7 +151,13 @@ return [
 	// 【产品】详情
 	'crm/product/read' => ['crm/product/read', ['method' => 'POST']],
 	// 【产品】上架/下架
-	'crm/product/status' => ['crm/product/status', ['method' => 'POST']],		
+	'crm/product/status' => ['crm/product/status', ['method' => 'POST']],
+	// 【产品】导出
+	'crm/product/excelExport' => ['crm/product/excelExport', ['method' => 'POST']],
+	// 【产品】导入模板下载
+	'crm/product/excelDownload' => ['crm/product/excelDownload', ['method' => 'GET']],
+	// 【产品】导入
+	'crm/product/excelImport' => ['crm/product/excelImport', ['method' => 'POST']],			
 
 	// 【回款】列表
 	'crm/receivables/index' => ['crm/receivables/index', ['method' => 'POST']],
@@ -167,13 +179,15 @@ return [
 	'crm/receivables/revokeCheck' => ['crm/receivables/revokeCheck', ['method' => 'POST']],		
 	
 	// 【回款计划】列表
-	'crm/receivablesPlan/index' => ['crm/receivablesPlan/index', ['method' => 'POST']],
+	'crm/receivables_plan/index' => ['crm/receivables_plan/index', ['method' => 'POST']],
 	// 【回款计划】创建
-	'crm/receivablesPlan/save' => ['crm/receivablesPlan/save', ['method' => 'POST']],	
+	'crm/receivables_plan/save' => ['crm/receivables_plan/save', ['method' => 'POST']],	
 	// 【回款计划】编辑
-	'crm/receivablesPlan/update' => ['crm/receivablesPlan/update', ['method' => 'POST']],	
+	'crm/receivables_plan/update' => ['crm/receivables_plan/update', ['method' => 'POST']],	
 	// 【回款计划】详情
-	'crm/receivablesPlan/read' => ['crm/receivablesPlan/read', ['method' => 'POST']],				
+	'crm/receivables_plan/read' => ['crm/receivables_plan/read', ['method' => 'POST']],	
+	// 【回款计划】删除
+	'crm/receivables_plan/delete' => ['crm/receivables_plan/delete', ['method' => 'POST']],				
 	
 	// 【相关团队】列表
 	'crm/setting/team' => ['crm/setting/team', ['method' => 'POST']],
@@ -182,19 +196,21 @@ return [
 	// 【客户保护规则】保存
 	'crm/setting/config' => ['crm/setting/config', ['method' => 'POST']],
 	// 【客户保护规则】详情
-	'crm/setting/configData' => ['crm/setting/configData', ['method' => 'POST']],			
+	'crm/setting/configData' => ['crm/setting/configData', ['method' => 'POST']],
+	// 【合同到期提醒】
+	'crm/setting/contractDay' => ['crm/setting/contractDay', ['method' => 'POST']],				
 
-	// 【项目状态组】列表
+	// 【商机状态组】列表
 	'crm/business_status/type' => ['crm/business_status/type', ['method' => 'POST']],
-	// 【项目状态组】创建
+	// 【商机状态组】创建
 	'crm/business_status/save' => ['crm/business_status/save', ['method' => 'POST']],
-	// 【项目状态组】编辑
+	// 【商机状态组】编辑
 	'crm/business_status/update' => ['crm/business_status/update', ['method' => 'POST']],
-	// 【项目状态组】详情
+	// 【商机状态组】详情
 	'crm/business_status/read' => ['crm/business_status/read', ['method' => 'POST']],		
-	// 【项目状态组】停用
+	// 【商机状态组】停用
 	'crm/business_status/enables' => ['crm/business_status/enables', ['method' => 'POST']],
-	// 【项目状态组】删除
+	// 【商机状态组】删除
 	'crm/business_status/delete' => ['crm/business_status/delete', ['method' => 'POST']],	
 
 	// 【产品分类】列表
@@ -220,7 +236,9 @@ return [
 	// 【工作台】销售漏斗
 	'crm/index/funnel' => ['crm/index/funnel', ['method' => 'POST']],
 	// 【工作台】销售趋势
-	'crm/index/saletrend' => ['crm/index/saletrend', ['method' => 'POST']],				
+	'crm/index/saletrend' => ['crm/index/saletrend', ['method' => 'POST']],	
+	// 【工作台】查重
+	'crm/index/search' => ['crm/index/search', ['method' => 'POST']],				
 
 	// MISS路由
 	'__miss__'  => 'admin/base/miss',

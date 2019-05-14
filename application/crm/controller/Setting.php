@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | Description: 客户模块设置
 // +----------------------------------------------------------------------
-// | Author: Michael_xu | gengxiaoxu@5kcrm.com 
+// | 
 // +----------------------------------------------------------------------
 
 namespace app\crm\controller;
@@ -23,7 +23,7 @@ class Setting extends ApiCommon
     {
         $action = [
             'permission'=>[''],
-            'allow'=>['config','configdata','team','teamsave']            
+            'allow'=>['config','configdata','team','teamsave','contractday']            
         ];
         Hook::listen('check_auth',$action);
         $request = Request::instance();
@@ -175,14 +175,14 @@ class Setting extends ApiCommon
                     }
                     continue;
                 case 'crm_business' : 
-                    $typesName = '项目';
+                    $typesName = '商机';
                     $businessModel = new \app\crm\model\Business();
                     $dataInfo = db('crm_business')->where(['business_id' => $v])->find();
                     //判断权限
                     $auth_user_ids = $userModel->getUserByPer('crm', 'business', 'teamSave');
                     if (!in_array($dataInfo['owner_user_id'],$auth_user_ids)) {
                         $error = true;
-                        $errorMessage[] = "项目'".$dataInfo['name']."'操作失败，错误原因：无权操作";
+                        $errorMessage[] = "商机'".$dataInfo['name']."'操作失败，错误原因：无权操作";
                     }                          
                     continue;
                 case 'crm_contract' : 
@@ -213,5 +213,23 @@ class Setting extends ApiCommon
         } else {
             return resultArray(['data' => '保存成功']);
         }
+    } 
+
+    /**
+     * 合同到期提醒天数
+     * @author Michael_xu
+     * @param 
+     * @return 
+     */
+    public function contractDay()
+    {
+        $param = $this->param;
+        $contract_day = $param['contract_day'] ? int($param['contract_day']) : 0; 
+        $res = db('crm_config')->where(['name' => 'contract_day'])->update(['value' => $contract_day]);
+        if ($res) {
+            return resultArray(['data' => '设置成功']);
+        } else {
+            return resultArray(['error' => '设置失败，请重试！']);
+        }          
     }     
 }

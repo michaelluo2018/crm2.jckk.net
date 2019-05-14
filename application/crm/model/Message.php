@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | Description: 站内信
 // +----------------------------------------------------------------------
-// | Author:  Michael_xu | gengxiaoxu@5kcrm.com
+// | 
 // +----------------------------------------------------------------------
 namespace app\crm\model;
 
@@ -56,7 +56,7 @@ class Message extends Common
         foreach ($list as $k=>$v) {
             $list[$k]['']
         }
-        $dataCount = $this->where($map)->count('customer_id');
+        $dataCount = $this->where($map)->count('message_id');
         $data = [];
         $data['list'] = $list;
         $data['dataCount'] = $dataCount ? : 0;
