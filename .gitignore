@@ -12,3 +12,5 @@ runtime/*
 thinkphp/*
 config/database.php
 *tmp
+README.md
+think
