@@ -59,7 +59,7 @@ class Event extends Common
 			$event_date[$k]['create_user_info'] = $userModel->getDataById($v['create_user_id']);
 			$event_date[$k]['ownerList'] = $userModel->getDataByStr($v['owner_user_ids']) ? : [];
 			$relation = Db::name('OaEventRelation')->where('event_id ='.$v['event_id'])->find();
-			$event_date[$k]['businessList'] = $relation['business_ids'] ? $BusinessModel->getDataByStr($relation['business_ids']) : []; //商机
+			$event_date[$k]['businessList'] = $relation['business_ids'] ? $BusinessModel->getDataByStr($relation['business_ids']) : []; //项目
 			$event_date[$k]['contactsList'] = $relation['contacts_ids'] ? $ContactsModel->getDataByStr($relation['contacts_ids']) : []; //联系人
 			$event_date[$k]['contractList'] = $relation['contract_ids'] ? $ContractModel->getDataByStr($relation['contract_ids']) : []; //合同
 			$event_date[$k]['customerList'] = $relation['customer_ids'] ? $CustomerModel->getDataByStr($relation['customer_ids']) : []; //客户
@@ -253,7 +253,7 @@ class Event extends Common
 	    $dataInfo['ownerList'] = $ownerList;
 		
 		$relation = Db::name('OaEventRelation')->where('event_id ='.$id)->find();
-		$dataInfo['businessList'] = $relation['business_ids']?$BusinessModel->getDataByStr($relation['business_ids']):''; //商机
+		$dataInfo['businessList'] = $relation['business_ids']?$BusinessModel->getDataByStr($relation['business_ids']):''; //项目
 		$dataInfo['contactsList'] = $relation['contacts_ids']?$ContactsModel->getDataByStr($relation['contacts_ids']):''; //联系人
 		$dataInfo['contractList'] = $relation['contract_ids']?$ContractModel->getDataByStr($relation['contract_ids']):''; //合同
 		$dataInfo['customerList'] = $relation['customer_ids']?$CustomerModel->getDataByStr($relation['customer_ids']):''; //客户

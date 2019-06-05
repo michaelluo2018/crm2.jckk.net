@@ -507,7 +507,10 @@ class Field extends Model
 		}
 		if ($param['action'] == 'excel') {
 			$map['form_type'] = array('not in',['file','form','user','structure']);
-		}		
+		}
+		if ($param['action'] == 'index') {
+			$map['form_type'] = array('not in',['file','form']);
+		}				
 
 		$map['types_id'] = $types_id;
 		$order = 'order_id asc, field_id asc';
@@ -530,7 +533,7 @@ class Field extends Model
 		            'value' => []
 				];
 			}
-			//商机、合同下产品
+			//项目、合同下产品
 			if (in_array($param['types'],['crm_business','crm_contract'])) {
 				$new_field_list[] = [
 					'field' => 'product',
@@ -624,7 +627,7 @@ class Field extends Model
 						$value = $dataInfo['category_str'] ? stringToArray($dataInfo['category_str']) : [];
 					}
 				} elseif ($v['form_type'] == 'business_type') {
-					//商机状态组
+					//项目状态组
 					$businessStatusModel = new \app\crm\model\BusinessStatus();
 					$userInfo = $userModel->getDataById($user_id);
 				    $setting = db('crm_business_type')
@@ -641,7 +644,7 @@ class Field extends Model
 						$value = (int)$dataInfo[$v['field']] ? : '';
 					}
 				} elseif ($v['form_type'] == 'business_status') {
-					//商机阶段
+					//项目阶段
 					if ($param['action'] == 'read') {
 						$value = $dataInfo[$v['field']] ? db('crm_business_status')->where(['status_id' => $dataInfo[$v['field']]])->value('name') : '';
 					} else {
@@ -716,6 +719,17 @@ class Field extends Model
 						->field('field,name,form_type,setting')
 						->order('order_id asc, field_id asc, update_time desc')
 						->select();
+		if (in_array($types,['crm_contract','crm_receivables'])) {
+			$field_arr = [
+				'0' => [
+					'field' => 'check_status',
+					'name' => '审核状态',
+					'form_type' => 'select',
+					'setting' => '待审核'.chr(10).'审核中'.chr(10).'审核通过'.chr(10).'审核失败'.chr(10).'已撤回'
+				]
+			];
+			$field_list = array_merge($field_list, $field_arr);
+		}
 		foreach ($field_list as $k=>$v) {
 			//处理setting内容
 			$setting = [];
@@ -739,7 +753,7 @@ class Field extends Model
 			if ($v['form_type'] == 'category') {
 				
 			} elseif ($v['form_type'] == 'business_type') {
-				//商机状态组
+				//项目状态组
 				$businessStatusModel = new \app\crm\model\BusinessStatus();
 				$userInfo = $userModel->getDataById($user_id);
 			    $setting = db('crm_business_type')

@@ -23,9 +23,9 @@ return [
 	'bi/product/statistics' => ['bi/product/statistics', ['method' => 'POST']],	
 	// 【商业智能】业绩目标完成情况
 	'bi/achievement/statistics' => ['bi/achievement/statistics', ['method' => 'POST']],	
-	// 【商业智能】新增商机数与金额趋势分析
+	// 【商业智能】新增项目数与金额趋势分析
 	'bi/business/businessTrend' => ['bi/business/businessTrend', ['method' => 'POST']],	
-	// 【商业智能】新增商机数与金额趋势分析 列表
+	// 【商业智能】新增项目数与金额趋势分析 列表
 	'bi/business/trendList' => ['bi/business/trendList', ['method' => 'POST']],	
 	// 【商业智能】赢单机会转化率趋势分析
 	'bi/business/win' => ['bi/business/win', ['method' => 'POST']],	

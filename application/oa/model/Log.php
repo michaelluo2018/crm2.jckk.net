@@ -59,36 +59,51 @@ class Log extends Common
 		$requestData = $this->requestData();
 		//获取权限范围内的员工
         $auth_user_ids = getSubUserId();
-		if($by){
-			switch ($by) {
-				case 'me' : 
-					$map['log.create_user_id'] = $user_id;
-					break;
-				case 'other':
-					$map['log.send_user_ids'] = ['like','%,'.$user_id.',%']; 
-					break;
-				case 'notRead' : 
-					$map['log.create_user_id'] = array('in',implode(',', $auth_user_ids)); 
-					$map['log.read_user_ids'] = ['not like','%,'.$user_id.',%']; 
-					break;
-			}
-		} else {
-			if ($request['send_user_id']) { //写日志人
-				$map['log.create_user_id'] = $request['send_user_id'];
-			} else {
-				$map = "log.create_user_id IN (".implode(',', $auth_user_ids).") OR log.send_user_ids like '%".$user_id."%'";
-			}
+		$dataWhere['user_id'] = $user_id;
+        $dataWhere['structure_id'] = $request['structure_id']; 
+        $dataWhere['auth_user_ids'] = $auth_user_ids; 
+        $logMap = '';    
+		switch ($by) {
+			case 'me' : 
+				$map['log.create_user_id'] = $user_id;
+				break;
+			case 'other':
+				$logMap = function($query) use ($dataWhere){
+	                    $query->where('log.send_user_ids',array('like','%,'.$dataWhere['user_id'].',%'))
+	                        ->whereOr('log.send_structure_ids',array('like','%,'.$dataWhere['structure_id'].',%'));
+	            };				
+				// $map['log.send_user_ids'] = ['like','%,'.$user_id.',%']; 
+				break;
+			case 'notRead' : 
+				$map['log.read_user_ids'] = ['not like','%,'.$user_id.',%']; 
+				$logMap = function($query) use ($dataWhere){
+	                    $query->where('log.create_user_id',array('in',implode(',', $dataWhere['auth_user_ids'])))
+	                    	->whereOr('log.send_user_ids',array('like','%,'.$dataWhere['user_id'].',%'))
+	                        ->whereOr('log.send_structure_ids',array('like','%,'.$dataWhere['structure_id'].',%'));
+	            };				
+				break;
+			default : 
+				$logMap = function($query) use ($dataWhere){
+	                    $query->where('log.create_user_id',array('in',implode(',', $dataWhere['auth_user_ids'])))
+	                    	->whereOr('log.send_user_ids',array('like','%,'.$dataWhere['user_id'].',%'))
+	                        ->whereOr('log.send_structure_ids',array('like','%,'.$dataWhere['structure_id'].',%'));
+	            };					
+				break;
 		}
+		if ($request['send_user_id']) { //写日志人
+			$map['log.create_user_id'] = $request['send_user_id'];
+		}		
 		
 		$list = Db::name('OaLog')
 				->where($map)
+				->where($logMap)
 				->alias('log')
 				->join('__ADMIN_USER__ user', 'user.id = log.create_user_id', 'LEFT')
         		->page($request['page'], $request['limit'])
         		->field('log.*,user.realname,user.thumb_img')
-				->order('log.log_id desc')
+				->order('log.update_time desc')
         		->select();
-        $dataCount = $this->alias('log')->where($map)->count('log_id');
+        $dataCount = $this->alias('log')->where($map)->where($logMap)->count('log_id');
 
 		foreach ($list as $k=>$v) {
 			$list[$k]['create_user_info']['realname'] = $v['realname'] ? : '';
@@ -117,7 +132,7 @@ class Log extends Common
 			$param['type'] = 'oa_log';
 			$list[$k]['replyList'] = $commonModel->read($param);
 			$relation = Db::name('OaLogRelation')->where(['log_id' => $v['log_id']])->find();
-			$list[$k]['businessList'] = $relation['business_ids'] ? $BusinessModel->getDataByStr($relation['business_ids']) : []; //商机
+			$list[$k]['businessList'] = $relation['business_ids'] ? $BusinessModel->getDataByStr($relation['business_ids']) : []; //项目
 			$list[$k]['contactsList'] = $relation['contacts_ids'] ? $ContactsModel->getDataByStr($relation['contacts_ids']) : []; //联系人
 			$list[$k]['contractList'] = $relation['contract_ids'] ? $ContractModel->getDataByStr($relation['contract_ids']) : []; //合同
 			$list[$k]['customerList'] = $relation['customer_ids'] ? $CustomerModel->getDataByStr($relation['customer_ids']) : []; //客户
@@ -228,7 +243,7 @@ class Log extends Common
 			
 			$relation = Db::name('OaLogRelation')->where(['log_id' => $log_id])->find();
 			$BusinessModel = new \app\crm\model\Business();
-			$data['businessList'] = $relation['business_ids'] ? $BusinessModel->getDataByStr($relation['business_ids']) : []; //商机
+			$data['businessList'] = $relation['business_ids'] ? $BusinessModel->getDataByStr($relation['business_ids']) : []; //项目
 			$ContactsModel = new \app\crm\model\Contacts();
 			$data['contactsList'] = $relation['contacts_ids'] ? $ContactsModel->getDataByStr($relation['contacts_ids']) : []; //联系人
 			$ContractModel = new \app\crm\model\Contract();
@@ -336,7 +351,7 @@ class Log extends Common
 		
 		$relation = Db::name('OaLogRelation')->where('log_id ='.$id)->find();
 		$BusinessModel = new \app\crm\model\Business();
-		$dataInfo['businessList'] = $relation['business_ids'] ? $BusinessModel->getDataByStr($relation['business_ids']) : []; //商机
+		$dataInfo['businessList'] = $relation['business_ids'] ? $BusinessModel->getDataByStr($relation['business_ids']) : []; //项目
 		$ContactsModel = new \app\crm\model\Contacts();
 		$dataInfo['contactsList'] = $relation['contacts_ids'] ? $ContactsModel->getDataByStr($relation['contacts_ids']) : []; //联系人
 		$ContractModel = new \app\crm\model\Contract();

@@ -175,14 +175,14 @@ class Setting extends ApiCommon
                     }
                     continue;
                 case 'crm_business' : 
-                    $typesName = '商机';
+                    $typesName = '项目';
                     $businessModel = new \app\crm\model\Business();
                     $dataInfo = db('crm_business')->where(['business_id' => $v])->find();
                     //判断权限
                     $auth_user_ids = $userModel->getUserByPer('crm', 'business', 'teamSave');
                     if (!in_array($dataInfo['owner_user_id'],$auth_user_ids)) {
                         $error = true;
-                        $errorMessage[] = "商机'".$dataInfo['name']."'操作失败，错误原因：无权操作";
+                        $errorMessage[] = "项目'".$dataInfo['name']."'操作失败，错误原因：无权操作";
                     }                          
                     continue;
                 case 'crm_contract' : 
@@ -231,5 +231,41 @@ class Setting extends ApiCommon
         } else {
             return resultArray(['error' => '设置失败，请重试！']);
         }          
-    }     
+    }
+    /**
+     * 记录类型编辑
+     * @author zhi
+     * @return [type] [description]
+     * INSERT INTO  `crm_crm_config` (`id` ,`name` ,`value` ,`description`)VALUES (NULL ,  'record_type',  '1 2 3 4',  '记录类型');
+     */
+    public function recordEdit()
+    {
+        $param = $this->param;
+        if($param['value']){
+            $array = setting($param['value']);
+            $res = db('crm_config')->where(['name' => 'record_type'])->update(['value' => $array]);
+            if ($res) {
+                return resultArray(['data' => '设置成功']);
+            } else {
+                return resultArray(['error' => '设置失败，请重试！']);
+            }
+        }else{
+            $record_type = db('crm_config')->where(['name' => 'record_type'])->find();
+            eval('$arr='.$record_type['value'].';');
+            $record_type['value'] = implode(' ',$arr);
+            return resultArray(['data' => $record_type]);
+        }
+    }
+   
+    /**
+     * 跟进记录 记录方式展示
+     * @author zhi
+     * @return [type] [description]
+     */
+    public function recordInfo()
+    {
+        $record_type = db('crm_config')->where(['name' => 'record_type'])->find();
+        eval('$arr='.$record_type['value'].';');
+        return resultArray(['data' => $arr]);
+    }
 }

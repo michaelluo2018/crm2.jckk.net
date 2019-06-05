@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------
-// | Description: 商业智能-商机分析
+// | Description: 商业智能-项目分析
 // +----------------------------------------------------------------------
 // | 
 // +----------------------------------------------------------------------
@@ -67,7 +67,7 @@ class Business extends ApiCommon
     }  
 
     /**
-     * 新增商机数与金额趋势分析
+     * 新增项目数与金额趋势分析
      * @return [type] [description]
      */
     public function businessTrend()
@@ -124,7 +124,7 @@ class Business extends ApiCommon
     }
 
     /**
-     * 新增商机数与金额趋势分析 列表
+     * 新增项目数与金额趋势分析 列表
      * @return [type] [description]
      */
     public function trendList()
@@ -155,7 +155,7 @@ class Business extends ApiCommon
             $owner_user_id_info = isset($v['owner_user_id']) ? $userModel->getUserById($v['owner_user_id']) : [];
             $dataList[$k]['owner_user_name'] = $owner_user_id_info['realname'];  
             $dataList[$k]['status_id_info'] = db('crm_business_status')->where('status_id',$v['status_id'])->value('name');//销售阶段
-            $dataList[$k]['type_id_info'] = db('crm_business_type')->where('type_id',$v['type_id'])->value('name');//商机状态组 
+            $dataList[$k]['type_id_info'] = db('crm_business_type')->where('type_id',$v['type_id'])->value('name');//项目状态组 
         }
         return resultArray(['data' => $dataList]);
     }

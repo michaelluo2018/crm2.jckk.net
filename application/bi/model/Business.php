@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------
-// | Description: 商机
+// | Description: 项目
 // +----------------------------------------------------------------------
 // | 
 // +----------------------------------------------------------------------
@@ -23,7 +23,7 @@ class Business extends Common
 	protected $autoWriteTimestamp = true;
 
 	/**
-     * [getDataCount 商机count]
+     * [getDataCount 项目count]
      * @author Michael_xu
      * @param     [string]                   $map [查询条件]
      * @param     [number]                   $page     [当前页数]
@@ -38,7 +38,7 @@ class Business extends Common
         return $count;		
     }  	
     /**
-     * [getDataMoney 商机金额]
+     * [getDataMoney 项目金额]
      * @author Michael_xu
      * @param     [string]                   $map [查询条件]
      * @param     [number]                   $page     [当前页数]
@@ -52,7 +52,7 @@ class Business extends Common
         return $money;		
     }  	
     /**
-     * 获取商机list
+     * 获取项目list
      * @return [type] [description]
      */
     function getDataList($request)

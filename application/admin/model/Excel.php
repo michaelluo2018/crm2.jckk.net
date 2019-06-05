@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | Description: 自定义字段模块数据Excel导入导出
 // +----------------------------------------------------------------------
-// | 
+// | Author: Michael_xu | gengxiaoxu@crm.com 
 // +----------------------------------------------------------------------
 
 namespace app\admin\model;
@@ -63,7 +63,7 @@ class Excel extends Common
 		$objProps->setCategory("crm"); //种类
 		$objPHPExcel->setActiveSheetIndex(0); //设置当前的sheet
 		$objActSheet = $objPHPExcel->getActiveSheet();
-		$objActSheet->setTitle('CRM系统导入模板'.date('Y-m-d',time())); //设置sheet的标题	
+		$objActSheet->setTitle('CRM软件导入模板'.date('Y-m-d',time())); //设置sheet的标题	
 
 		//存储Excel数据源到其他工作薄
 		$objPHPExcel->createSheet();
@@ -169,10 +169,10 @@ class Excel extends Common
 			case 'crm_customer' : $types_name = '客户信息'; break;
 			case 'crm_contacts' : $types_name = '联系人信息'; break;
 			case 'crm_product' : $types_name = '产品信息'; break;
-			case 'crm_bbusiness' : $types_name = '商机信息'; break;
+			case 'crm_bbusiness' : $types_name = '项目信息'; break;
 			case 'crm_contract' : $types_name = '合同信息'; break;
 			case 'crm_receivables' : $types_name = '回款信息'; break;
-			default : $types_name = 'CRM系统'; break;
+			default : $types_name = 'CRM软件'; break;
 		}		
         $content = $types_name.'（*代表必填项）';
         $objActSheet->setCellValue('A1', $content);
@@ -275,17 +275,30 @@ class Excel extends Common
             
             //实例化主文件
 			vendor("phpexcel.PHPExcel");
+
+			// set_time_limit(300);
+   			// ini_set("memory_limit","1024M");
+
+			// $cacheMethod = \PHPExcel_CachedObjectStorageFactory::cache_to_wincache;  
+			// $cacheSettings = array( 'memcacheServer'  => 'localhost',  
+			//     'memcachePort'    => 11211,  
+			//     'cacheTime'       => 600  
+			// );  
+			// \PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
+
         	$objPHPExcel = new \phpexcel();
 
 	        if ($ext =='xlsx') {
 	        	$objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
 			    $objRender = \PHPExcel_IOFactory::createReader('Excel2007');
+			    // $objRender->setReadDataOnly(true);
 			    $ExcelObj = $objRender->load($savePath);
-			} else if ($ext =='xls') {
+			} elseif ($ext =='xls') {
 				$objWriter = new \PHPExcel_Writer_Excel5($objPHPExcel);
 			    $objRender = \PHPExcel_IOFactory::createReader('Excel5');
+			    // $objRender->setReadDataOnly(true);
 			    $ExcelObj = $objRender->load($savePath);
-			} else if ($ext=='csv') {
+			} elseif ($ext=='csv') {
 				$objWriter = new \PHPExcel_Reader_CSV($objPHPExcel);
 			    //默认输入字符集
 			    $objWriter->setInputEncoding('UTF-8');

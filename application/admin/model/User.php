@@ -107,6 +107,7 @@ class User extends Common
 				->alias('user')
 				->join('__ADMIN_STRUCTURE__ structure', 'structure.id = user.structure_id', 'LEFT')
 				->join('HrmUserDet hud','hud.user_id = user.id','LEFT')
+				->page( $request['page'], $request['limit'])
 				->where($map)
 				->field('user.id,user.username,user.img,user.thumb_img,user.realname,user.num,user.email,user.mobile,user.sex,user.structure_id,user.post,user.status,user.parent_id,user.type,user.create_time,structure.name as s_name')
 				->order($exp)
@@ -121,8 +122,8 @@ class User extends Common
 			$list[$k]['status_name'] = $v['status'] ? $this->statusArr[$v['status']] : '停用';
 			//角色
 			$groupsArr = $this->get($v['id'])->groups;
-			$groups = '';
-			$groupids = '';
+			$groups = [];
+			$groupids = [];
 			foreach ($groupsArr as $key=>$val) {
 				$groups[] = $val['title'];
 				$groupids[] = $val['id'];

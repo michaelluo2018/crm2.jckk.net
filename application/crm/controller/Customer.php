@@ -26,7 +26,7 @@ class Customer extends ApiCommon
     public function _initialize()
     {
         $action = [
-            'permission'=>['exceldownload'],
+            'permission'=>['exceldownload','setfollow'],
             'allow'=>['']            
         ];
         Hook::listen('check_auth',$action);
@@ -200,13 +200,13 @@ class Customer extends ApiCommon
                 $errorMessage[] = '名称为'.$data['name'].'的客户删除失败,错误原因：无权操作';
                 continue;
             }
-            //有商机、合同、联系人则不能删除 
+            //有项目、合同、联系人则不能删除 
             $resBusiness = db('crm_business')->where(['customer_id' => $v])->find();
             $resContract = db('crm_contract')->where(['customer_id' => $v])->find();
             $resContacts = db('crm_contacts')->where(['customer_id' => $v])->find();
             if ($resBusiness) {
                 $isDel = false;
-                $errorMessage[] = '名称为'.$data['name'].'的客户删除失败,错误原因：客户下存在商机，不能删除';
+                $errorMessage[] = '名称为'.$data['name'].'的客户删除失败,错误原因：客户下存在项目，不能删除';
                 continue;
             }    
             if ($resContract) {
@@ -270,6 +270,7 @@ class Customer extends ApiCommon
         $data = [];
         $data['owner_user_id'] = $param['owner_user_id'];
         $data['update_time'] = time();
+        $data['follow'] = '待跟进';
 
         $ownerUserName = $userModel->getUserNameById($param['owner_user_id']);
         $errorMessage = [];
@@ -304,7 +305,7 @@ class Customer extends ApiCommon
                 }                
             }            
 
-            //商机、合同转移
+            //项目、合同转移
             if (in_array('crm_business',$types)) {
                 $businessIds = [];
                 $businessIds = db('crm_business')->where(['customer_id' => $customer_id])->column('business_id');
@@ -478,6 +479,7 @@ class Customer extends ApiCommon
             $data['owner_user_id'] = $userInfo['id'];
             $data['update_time'] = time();
             $data['deal_time'] = time();
+            $data['follow'] = '待跟进';
             $resCustomer = db('crm_customer')->where(['customer_id' => $v])->update($data);
             if (!$resCustomer) {
                 $errorMessage[] = '客户《'.$dataName.'》领取失败，错误原因：数据出错；';
@@ -530,6 +532,7 @@ class Customer extends ApiCommon
             $data['owner_user_id'] = $owner_user_id;
             $data['update_time'] = time();
             $data['deal_time'] = time();
+            $data['follow'] = '待跟进';
             $resCustomer = db('crm_customer')->where(['customer_id' => $v])->update($data);
             if (!$resCustomer) {
                 $errorMessage[] = '客户《'.$dataName.'》分配失败，错误原因：数据出错；';
@@ -619,7 +622,7 @@ class Customer extends ApiCommon
         $objProps->setCategory("crm");
         $objPHPExcel->setActiveSheetIndex(0);
         $objActSheet = $objPHPExcel->getActiveSheet();
-        $objActSheet->setTitle('CRM系统客户导入模板'.date('Y-m-d',time()));
+        $objActSheet->setTitle('CRM软件客户导入模板'.date('Y-m-d',time()));
 
         //填充边框
         $styleArray = [
@@ -790,5 +793,32 @@ class Customer extends ApiCommon
             return resultArray(['error'=>'操作失败，请重试']);
         }
         return resultArray(['data'=>'跟进成功']);        
-    }        
+    }
+
+    /**
+     * 置顶 / 取消置顶
+     * @return [type] [description]
+     */
+    public function top()
+    {
+        $param = $this->param;
+        $userInfo = $this->userInfo;
+        $param['create_role_id'] = $userInfo['id'];
+        $param['top_time'] = time();
+
+        $top_id = Db::name('crm_top')->where(['module' => ['eq',$param['module']],'create_role_id' => ['eq',$userInfo['id']],'module_id' => ['eq',$param['module_id']]])->column('top_id');
+        if ($top_id) {
+            if ($res = Db::name('crm_top')->where('top_id',$top_id[0])->update($param)) {
+                return resultArray(['data' => $res]);
+            } else {
+                return resultArray(['error' => Db::name('crm_top')->getError()]);
+            }
+        } else {
+            if ($res =  Db::name('crm_top')->data($param)->insert()) {
+                return resultArray(['data' => $res]);
+            } else {
+                return resultArray(['error' => $customerModel->getError()]);
+            }
+        }
+    }     
 }
