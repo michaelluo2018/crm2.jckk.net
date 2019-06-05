@@ -64,7 +64,7 @@ class Customer extends Common
 			//普通筛选
 			$searchMap = function($query) use ($search){
 			        $query->where('customer.name',array('like','%'.$search.'%'))
-			        	->whereOr('customer.mobile',array('like','%'.$search.'%'))
+			        	// ->whereOr('customer.mobile',array('like','%'.$search.'%'))
 			        	->whereOr('customer.telephone',array('like','%'.$search.'%'));
 			};
 			// $sceneMap['name'] = ['condition' => 'contains','value' => $search,'form_type' => 'text','name' => '客户名称'];
