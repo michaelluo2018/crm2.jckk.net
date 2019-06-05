@@ -148,6 +148,7 @@ class Customer extends ApiCommon
         }        
 
         $param['user_id'] = $userInfo['id'];
+        var_dump($param);die();
         if ($customerModel->updateDataById($param, $param['id'])) {
             return resultArray(['data' => '编辑成功']);
         } else {
