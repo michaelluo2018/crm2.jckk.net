@@ -49,7 +49,6 @@ class Customer extends ApiCommon
     {
         $customerModel = model('Customer');
         $param = $this->param;
-        var_dump($param);die();
         $userInfo = $this->userInfo;
         $param['user_id'] = $userInfo['id']; 
         $data = $customerModel->getDataList($param);       
