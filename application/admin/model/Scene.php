@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | Description: 场景
 // +----------------------------------------------------------------------
-// |  
+// |   
 // +----------------------------------------------------------------------
 
 namespace app\admin\model;
@@ -130,7 +130,7 @@ class Scene extends Common
 	 * @param  array   $param  [description]
 	 * @author Michael_xu
 	 */ 
-	public function getDataById($id = '', $user_id, $types = '')
+	public function getDataById($id = '', $user_id = '', $types = '')
 	{
 		$where = [];
 		$where['scene_id'] = $id;
