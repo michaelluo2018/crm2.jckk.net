@@ -99,7 +99,6 @@ class ReceivablesPlan extends Common
 		if ($param['file_ids']) $param['file'] = arrayToString($param['file_ids']); //附件
 		//期数规则（1,2,3..）
 		$maxNum = db('crm_receivables_plan')->where(['contract_id' => $param['contract_id']])->count('num');
-		halt($param['contract_id'].'<br>'.$maxNum);
 		$param['num'] = $maxNum ? $maxNum+1 : 1;
 		//提醒日期
 		$param['remind_date'] = $param['remind'] ? date('Y-m-d',strtotime($param['return_date'])-86400*$param['remind']) : $param['return_date'];
