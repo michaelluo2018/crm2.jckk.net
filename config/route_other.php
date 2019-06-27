@@ -8,10 +8,10 @@
 return [
     // 定义资源路由
     '__rest__'=>[
-        // 'oa/log'		   =>'oa/log',
+        // 'other/log'		   =>'otherxc/log',
     ],
     // 【工作台】工作圈
-    'other/sendEmail/' => ['other/send/mail', ['method' => 'GET']],
+    'other/index/index' => ['other/index/index', ['method' => 'GET']],
 
     // MISS路由
     '__miss__'  => 'admin/base/miss',
