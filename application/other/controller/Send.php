@@ -7,12 +7,11 @@
  */
 namespace app\other\controller;
 
-use think\Request;
-use think\Db;
-use app\common\adapter\AuthAdapter;
-use app\common\controller\Common;
 
-class Send extends Common
+
+use think\Controller;
+
+class Send extends Controller
 {
     public function mail(){
         halt(1);
