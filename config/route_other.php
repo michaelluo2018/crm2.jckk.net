@@ -4,8 +4,15 @@
 // +----------------------------------------------------------------------
 // |
 // +----------------------------------------------------------------------
-//【测试】测试
-Route::get('other/sendEmail','other/send/mail');
 
-//【MISS】MISS路由
-Route::miss('api/base/miss');
+return [
+    // 定义资源路由
+    '__rest__'=>[
+        // 'oa/log'		   =>'oa/log',
+    ],
+    // 【工作台】工作圈
+    'other/sendEmail/' => ['other/send/mail', ['method' => 'GET']],
+
+    // MISS路由
+    '__miss__'  => 'admin/base/miss',
+];
