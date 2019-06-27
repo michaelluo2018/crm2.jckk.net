@@ -7,8 +7,6 @@
  */
 namespace app\other\controller;
 
-
-
 use think\Controller;
 
 class Send extends Controller
