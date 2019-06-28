@@ -308,7 +308,6 @@ class Message extends ApiCommon
             case '1' : $param['end_time'] = array('between',array(date('Y-m-d',time()),date('Y-m-d',time()+86400*$expireDay))); break;
             case '2' : $param['end_time'] = array('lt',date('Y-m-d',time())); break;
         }
-        halt($param);
         $data = $contractModel->getDataList($param);
         if ($types == 'list') {
             return resultArray(['data' => $data]);
