@@ -452,7 +452,6 @@ class User extends Common
     		$userData['status'] = 1;
     	}
         db('admin_user')->where(['id' => $userInfo['id']])->update($userData);
-        halt($data);
         return $data;
     }
 
