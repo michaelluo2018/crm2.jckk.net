@@ -282,7 +282,6 @@ class Message extends ApiCommon
             case '2' : $param['receivables_id'] = array('gt',0); break;
             case '3' : $param['receivables_id'] = 0; $param['remind_date'] = array('lt',date('Y-m-d',time())); break;
         }
-        halt($param);
         $data = $receivablesPlanModel->getDataList($param);
         if ($types == 'list') {
             return resultArray(['data' => $data]);
