@@ -49,9 +49,10 @@ class ReceivablesPlan extends Common
             $map = where_arr($map, 'crm', 'receivables_plan', 'index'); //高级筛选
         }
         if ($map['receivables_plan.owner_user_id']) {
-            $maps = array(
-                'contract.owner_user_id|contract.ro_user_id|contract.rw_user_id','like','%,'.$request['map']['owner_user_id'].',%'
-            );
+            $maps = [
+                //'contract.owner_user_id|contract.ro_user_id|contract.rw_user_id','like','%,'.$request['map']['owner_user_id'].',%'
+                ['contract.owner_user_id|contract.ro_user_id|contract.rw_user_id']=>['like','%,'.$request['map']['owner_user_id'].',%'],
+            ];
             unset($map['receivables_plan.owner_user_id']);
         }
         $list = db('crm_receivables_plan')
