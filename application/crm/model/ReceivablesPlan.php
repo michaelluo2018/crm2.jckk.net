@@ -41,7 +41,6 @@ class ReceivablesPlan extends Common
         unset($request['user_id']);
 
         $request = $this->fmtRequest( $request );
-        halt($request);
         $map = $request['map'] ? : [];
         if (isset($map['search'])) {
             //普通筛选
@@ -54,6 +53,7 @@ class ReceivablesPlan extends Common
             $map['contract.owner_user_id'] = $map['receivables_plan.owner_user_id'];
             unset($map['receivables_plan.owner_user_id']);
         }
+        halt($map);
         $list = db('crm_receivables_plan')
             ->alias('receivables_plan')
             ->join('__CRM_CONTRACT__ contract','receivables_plan.contract_id = contract.contract_id','LEFT')
