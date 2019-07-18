@@ -50,7 +50,6 @@ class ReceivablesPlan extends Common
         }
         if ($map['receivables_plan.owner_user_id']) {
             $map['contract.owner_user_id'] = $map['receivables_plan.owner_user_id'];
-            $map['contract.ro_user_id'] = ['like','%,'.$user_id.',%'];
             unset($map['receivables_plan.owner_user_id']);
         }
         halt($map);
