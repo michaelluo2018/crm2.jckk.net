@@ -19,25 +19,25 @@ class Contacts extends ApiCommon
      * @permission 无限制
      * @allow 登录用户可访问
      * @other 其他根据系统设置
-    **/
+     **/
     public function _initialize()
     {
         $action = [
             'permission'=>['exceldownload'],
-            'allow'=>['relation']            
+            'allow'=>['relation']
         ];
         Hook::listen('check_auth',$action);
         $request = Request::instance();
-        $a = strtolower($request->action());        
+        $a = strtolower($request->action());
         if (!in_array($a, $action['permission'])) {
             parent::_initialize();
         }
-    } 
+    }
 
     /**
      * 联系人列表
      * @author Michael_xu
-     * @return 
+     * @return
      */
     public function index()
     {
@@ -45,15 +45,15 @@ class Contacts extends ApiCommon
         $param = $this->param;
         $userInfo = $this->userInfo;
         $param['user_id'] = $userInfo['id'];
-        $data = $contactsModel->getDataList($param);       
+        $data = $contactsModel->getDataList($param);
         return resultArray(['data' => $data]);
     }
 
     /**
      * 添加联系人
      * @author Michael_xu
-     * @param 
-     * @return 
+     * @param
+     * @return
      */
     public function save()
     {
@@ -62,7 +62,7 @@ class Contacts extends ApiCommon
         $userInfo = $this->userInfo;
         $param['create_user_id'] = $userInfo['id'];
         $param['owner_user_id'] = $userInfo['id'];
-        
+
         if ($data = $contactsModel->createData($param)) {
             //关联 联系人与项目  客户添加与项目添加联系人可共用此接口
             $business_id = $param['business_id']?$param['business_id']:0;
@@ -84,8 +84,8 @@ class Contacts extends ApiCommon
     /**
      * 联系人详情
      * @author Michael_xu
-     * @param  
-     * @return 
+     * @param
+     * @return
      */
     public function read()
     {
@@ -98,7 +98,7 @@ class Contacts extends ApiCommon
         if (!in_array($data['owner_user_id'],$auth_user_ids)) {
             header('Content-Type:application/json; charset=utf-8');
             exit(json_encode(['code'=>102,'error'=>'无权操作']));
-        }         
+        }
         if (!$data) {
             return resultArray(['error' => $contactsModel->getError()]);
         }
@@ -108,11 +108,11 @@ class Contacts extends ApiCommon
     /**
      * 编辑联系人
      * @author Michael_xu
-     * @param 
-     * @return 
+     * @param
+     * @return
      */
     public function update()
-    {    
+    {
         $contactsModel = model('Contacts');
         $userModel = new \app\admin\model\User();
         $param = $this->param;
@@ -125,24 +125,24 @@ class Contacts extends ApiCommon
         if (!in_array($data['owner_user_id'],$auth_user_ids)) {
             header('Content-Type:application/json; charset=utf-8');
             exit(json_encode(['code'=>102,'error'=>'无权操作']));
-        }        
+        }
         if ($contactsModel->updateDataById($param, $param['id'])) {
             return resultArray(['data' => '编辑成功']);
         } else {
             return resultArray(['error' => $contactsModel->getError()]);
-        }      
+        }
     }
 
     /**
      * 删除联系人
      * @author Michael_xu
-     * @param 
-     * @return 
+     * @param
+     * @return
      */
     public function delete()
     {
         $contactsModel = model('Contacts');
-        $param = $this->param;        
+        $param = $this->param;
 
         if (!is_array($param['id'])) {
             $contacts_id[] = $param['id'];
@@ -169,23 +169,21 @@ class Contacts extends ApiCommon
                 $errorMessage[] = '名称为'.$data['name'].'的联系人删除失败,错误原因：无权操作';
                 continue;
             }
-            $delIds[] = $v;            
+            $delIds[] = $v;
         }
         if ($delIds) {
             $data = $contactsModel->delDatas($delIds);
             if (!$data) {
                 return resultArray(['error' => $contactsModel->getError()]);
             }
-            //删除操作记录
-            $actionRecordModel = new \app\admin\model\ActionRecord();
-            $res = $actionRecordModel->delDataById(['types' => 'crm_contacts','action_id' => $delIds]);                        
-        }        
+            actionLog($delIds,'','','');
+        }
         if ($errorMessage) {
             return resultArray(['error' => $errorMessage]);
         } else {
             return resultArray(['data' => '删除成功']);
-        }         
-    }      
+        }
+    }
 
     /**
      * 联系人转移
@@ -194,7 +192,7 @@ class Contacts extends ApiCommon
      * @param is_remove 1移出，2转为团队成员
      * @param type 权限 1只读2读写
      * @return
-     */ 
+     */
     public function transfer()
     {
         $param = $this->param;
@@ -208,12 +206,12 @@ class Contacts extends ApiCommon
             return resultArray(['error' => '变更负责人不能为空']);
         }
         if (!$param['contacts_id'] || !is_array($param['contacts_id'])) {
-            return resultArray(['error' => '请选择需要转移的联系人']); 
+            return resultArray(['error' => '请选择需要转移的联系人']);
         }
-        
+
         $is_remove = $param['is_remove'] == 2 ? : 1;
         $type = $param['type'] == 2 ? : 1;
-        
+
         $data = [];
         $data['owner_user_id'] = $param['owner_user_id'];
         $data['update_time'] = time();
@@ -246,10 +244,10 @@ class Contacts extends ApiCommon
     /**
      * 联系人导入模板
      * @author Michael_xu
-     * @param 
+     * @param
      * @return
-     */ 
-    public function excelDownload() 
+     */
+    public function excelDownload()
     {
         $param = $this->param;
         $userInfo = $this->userInfo;
@@ -257,16 +255,16 @@ class Contacts extends ApiCommon
 
         // 导出的字段列表
         $fieldModel = new \app\admin\model\Field();
-        $fieldParam['types'] = 'crm_contacts'; 
-        $fieldParam['action'] = 'excel'; 
+        $fieldParam['types'] = 'crm_contacts';
+        $fieldParam['action'] = 'excel';
         $field_list = $fieldModel->field($fieldParam);
         $res = $excelModel->excelImportDownload($field_list, 'crm_contacts');
-    }  
+    }
 
     /**
      * 联系人导出
      * @author Michael_xu
-     * @param 
+     * @param
      * @return
      */
     public function excelExport()
@@ -275,9 +273,9 @@ class Contacts extends ApiCommon
         $userInfo = $this->userInfo;
         $param['user_id'] = $userInfo['id'];
         if ($param['contacts_id']) {
-           $param['contacts_id'] = ['condition' => 'in','value' => $param['contacts_id'],'form_type' => 'text','name' => ''];
-           $param['is_excel'] = 1;
-        }        
+            $param['contacts_id'] = ['condition' => 'in','value' => $param['contacts_id'],'form_type' => 'text','name' => ''];
+            $param['is_excel'] = 1;
+        }
 
         $excelModel = new \app\admin\model\Excel();
         // 导出的字段列表
@@ -285,17 +283,17 @@ class Contacts extends ApiCommon
         $field_list = $fieldModel->getIndexFieldList('crm_contacts', $userInfo['id']);
         // 文件名
         $file_name = 'crm_contacts_'.date('Ymd');
-        $param['pageType'] = 'all'; 
+        $param['pageType'] = 'all';
         $excelModel->exportCsv($file_name, $field_list, function($page) use ($param){
             $list = model('Contacts')->getDataList($param);
             return $list;
         });
-    } 
+    }
 
     /**
      * 联系人数据导入
      * @author Michael_xu
-     * @param 
+     * @param
      * @return
      */
     public function excelImport()
@@ -312,7 +310,7 @@ class Contacts extends ApiCommon
             return resultArray(['error'=>$excelModel->getError()]);
         }
         return resultArray(['data'=>'导入成功']);
-    }  
+    }
 
     /**
      * 联系人  关联/取消关联  项目

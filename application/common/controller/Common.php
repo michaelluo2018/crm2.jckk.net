@@ -19,13 +19,14 @@ class Common extends Controller
     public function _initialize()
     {
         parent::_initialize();
-        /*防止跨域*/      
+        /*防止跨域*/
         header('Access-Control-Allow-Origin: '.$_SERVER['HTTP_ORIGIN']);
         header('Access-Control-Allow-Credentials: true');
         header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
         header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, authKey, sessionId");
-        $param = Request::instance()->param();          
-        $this->param = $param;   
+        $param = Request::instance()->param();
+        unset($param['platform']);
+        $this->param = $param;
         $request = request();
         $header = $request->header();
         $authKey = $header['authkey'];
@@ -34,22 +35,22 @@ class Common extends Controller
 
         $m = strtolower($request->module());
         $c = strtolower($request->controller());
-        $a = strtolower($request->action());     
-        $this->m = $m;          
-        $this->c = $c;          
-        $this->a = $a;          
+        $a = strtolower($request->action());
+        $this->m = $m;
+        $this->c = $c;
+        $this->a = $a;
     }
 
-    public function object_array($array) 
-    {  
-        if (is_object($array)) {  
-            $array = (array)$array;  
-        } 
-        if (is_array($array)) {  
-            foreach ($array as $key=>$value) {  
-                $array[$key] = $this->object_array($value);  
-            }  
-        }  
-        return $array;  
-    } 
+    public function object_array($array)
+    {
+        if (is_object($array)) {
+            $array = (array)$array;
+        }
+        if (is_array($array)) {
+            foreach ($array as $key=>$value) {
+                $array[$key] = $this->object_array($value);
+            }
+        }
+        return $array;
+    }
 }
