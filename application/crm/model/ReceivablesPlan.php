@@ -40,7 +40,6 @@ class ReceivablesPlan extends Common
         unset($request['search']);
         unset($request['user_id']);
         $request = $this->fmtRequest( $request );
-        halt($request);
         $map = $request['map'] ? : [];
         if (isset($map['search'])) {
             //普通筛选
@@ -49,6 +48,7 @@ class ReceivablesPlan extends Common
         } else {
             $map = where_arr($map, 'crm', 'receivables_plan', 'index'); //高级筛选
         }
+        halt($request);
         if ($map['receivables_plan.owner_user_id']) {
             $maps['contract.owner_user_id'] = [
                 $map['receivables_plan.owner_user_id'],
