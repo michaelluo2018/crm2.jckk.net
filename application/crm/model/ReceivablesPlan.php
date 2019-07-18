@@ -53,7 +53,6 @@ class ReceivablesPlan extends Common
             $map['contract.owner_user_id'] = $map['receivables_plan.owner_user_id'];
             unset($map['receivables_plan.owner_user_id']);
         }
-        halt($map);
         $list = db('crm_receivables_plan')
             ->alias('receivables_plan')
             ->join('__CRM_CONTRACT__ contract','receivables_plan.contract_id = contract.contract_id','LEFT')
@@ -69,6 +68,7 @@ class ReceivablesPlan extends Common
             ->where($map)
             ->count('plan_id');
         foreach ($list as $k=>$v) {
+            halt($v);
             $list[$k]['create_user_id_info'] = $userModel->getUserById($v['create_user_id']);
             $list[$k]['contract_id_info']['name'] = $v['contract_name'] ? : '';
             $list[$k]['contract_id_info']['contract_id'] = $v['contract_id'] ? : '';
