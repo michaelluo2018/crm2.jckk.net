@@ -39,7 +39,7 @@ class ReceivablesPlan extends Common
         unset($request['scene_id']);
         unset($request['search']);
         unset($request['user_id']);
-
+        halt($request);
         $request = $this->fmtRequest( $request );
         $map = $request['map'] ? : [];
         if (isset($map['search'])) {
