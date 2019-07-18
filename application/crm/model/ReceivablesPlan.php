@@ -64,22 +64,13 @@ class ReceivablesPlan extends Common
             ->limit(($request['page']-1)*$request['limit'], $request['limit'])
             ->field('receivables_plan.*,customer.name as customer_name,contract.name as contract_name')
             ->select();
-        echo db('crm_receivables_plan')
+        $dataCount = db('crm_receivables_plan')
             ->alias('receivables_plan')
             ->join('__CRM_CONTRACT__ contract','receivables_plan.contract_id = contract.contract_id','LEFT')
             ->join('__CRM_CUSTOMER__ customer','receivables_plan.customer_id = customer.customer_id','LEFT')
             ->where($map)
             ->where($maps)
             ->whereOr($mapss)
-            ->limit(($request['page']-1)*$request['limit'], $request['limit'])
-            ->field('receivables_plan.*,customer.name as customer_name,contract.name as contract_name')
-            ->getlastsql();die();
-        $dataCount = db('crm_receivables_plan')
-            ->alias('receivables_plan')
-            ->join('__CRM_CONTRACT__ contract','receivables_plan.contract_id = contract.contract_id','LEFT')
-            ->join('__CRM_CUSTOMER__ customer','receivables_plan.customer_id = customer.customer_id','LEFT')
-            ->where($map)
-            ->whereOr($maps)
             ->count('plan_id');
         foreach ($list as $k=>$v) {
             $list[$k]['create_user_id_info'] = $userModel->getUserById($v['create_user_id']);
