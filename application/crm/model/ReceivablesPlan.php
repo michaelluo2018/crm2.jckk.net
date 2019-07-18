@@ -61,7 +61,7 @@ class ReceivablesPlan extends Common
             ->where($map)
             ->where(
                 function($query) use($request){
-                    $request && $query->where('contract.owner_user_id',$request['map']['owner_user_id'])->where('contract.ro_user_id|contract.rw_user_id','like','%,'.$request['map']['owner_user_id'].',%');
+                    $request && $query->where('contract.owner_user_id',$request['map']['owner_user_id'])->whereOr('contract.ro_user_id|contract.rw_user_id','like','%,'.$request['map']['owner_user_id'].',%');
                 }
             )
             ->limit(($request['page']-1)*$request['limit'], $request['limit'])
@@ -74,7 +74,7 @@ class ReceivablesPlan extends Common
             ->where($map)
             ->where(
                 function($query) use($request){
-                    $request && $query->where('contract.owner_user_id',$request['map']['owner_user_id'])->where('contract.ro_user_id|contract.rw_user_id','like','%,'.$request['map']['owner_user_id'].',%');
+                    $request && $query->where('contract.owner_user_id',$request['map']['owner_user_id'])->whereOr('contract.ro_user_id|contract.rw_user_id','like','%,'.$request['map']['owner_user_id'].',%');
                 }
             )
             ->limit(($request['page']-1)*$request['limit'], $request['limit'])
