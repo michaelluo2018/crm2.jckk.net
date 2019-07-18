@@ -61,7 +61,7 @@ class ReceivablesPlan extends Common
             ->join('__CRM_CONTRACT__ contract','receivables_plan.contract_id = contract.contract_id','LEFT')
             ->join('__CRM_CUSTOMER__ customer','receivables_plan.customer_id = customer.customer_id','LEFT')
             ->where($map)
-            ->whereOr($maps)
+            ->where($maps)
             ->limit(($request['page']-1)*$request['limit'], $request['limit'])
             ->field('receivables_plan.*,customer.name as customer_name,contract.name as contract_name')
             ->select();
@@ -70,7 +70,7 @@ class ReceivablesPlan extends Common
             ->join('__CRM_CONTRACT__ contract','receivables_plan.contract_id = contract.contract_id','LEFT')
             ->join('__CRM_CUSTOMER__ customer','receivables_plan.customer_id = customer.customer_id','LEFT')
             ->where($map)
-            ->whereOr($maps)
+            ->where($maps)
             ->limit(($request['page']-1)*$request['limit'], $request['limit'])
             ->field('receivables_plan.*,customer.name as customer_name,contract.name as contract_name')
             ->getlastsql();
