@@ -49,7 +49,7 @@ class ReceivablesPlan extends Common
             $map = where_arr($map, 'crm', 'receivables_plan', 'index'); //高级筛选
         }
         if ($map['receivables_plan.owner_user_id']) {
-            $map['contract.owner_user_id'] = $map['receivables_plan.owner_user_id'];
+            $maps['contract.owner_user_id'] = $map['receivables_plan.owner_user_id'];
             $maps['contract.ro_user_id'] = ['like','%,'.$request['map']['owner_user_id'].',%'];
             $maps['contract.rw_user_id'] = ['like','%,'.$request['map']['owner_user_id'].',%'];
             unset($map['receivables_plan.owner_user_id']);
@@ -60,7 +60,6 @@ class ReceivablesPlan extends Common
             ->join('__CRM_CUSTOMER__ customer','receivables_plan.customer_id = customer.customer_id','LEFT')
             ->where($map)
             ->whereOr($maps)
-            ->whereOr($maps)
             ->limit(($request['page']-1)*$request['limit'], $request['limit'])
             ->field('receivables_plan.*,customer.name as customer_name,contract.name as contract_name')
             ->select();
@@ -69,7 +68,6 @@ class ReceivablesPlan extends Common
             ->join('__CRM_CONTRACT__ contract','receivables_plan.contract_id = contract.contract_id','LEFT')
             ->join('__CRM_CUSTOMER__ customer','receivables_plan.customer_id = customer.customer_id','LEFT')
             ->where($map)
-            ->whereOr($maps)
             ->whereOr($maps)
             ->count('plan_id');
         foreach ($list as $k=>$v) {
