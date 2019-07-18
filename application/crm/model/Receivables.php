@@ -80,7 +80,6 @@ class Receivables extends Common
         $auth_user_ids = array_merge(array_unique(array_filter($auth_user_ids))) ? : ['-1'];
         //负责人、相关团队
         $authMap['receivables.owner_user_id'] = ['in',$auth_user_ids];
-        halt($authMap);
         //人员类型
         $userField = $fieldModel->getFieldByFormType('crm_receivables', 'user');
         $structureField = $fieldModel->getFieldByFormType('crm_receivables', 'structure');  //部门类型
