@@ -280,7 +280,7 @@ class Message extends ApiCommon
         switch ($type) {
             case '1' : $param['receivables_id'] = 0; $param['remind_date'] = array('elt',date('Y-m-d',time())); $param['return_date'] = array('egt',date('Y-m-d',time())); break;
             case '2' : $param['receivables_id'] = array('gt',0); break;
-            case '3' : $param['receivables_id'] = 0; $param['remind_date'] = array('lt',date('Y-m-d',time())); break;
+            case '3' : $param['receivables_id'] = 0; $param['return_date'] = array('lt',date('Y-m-d',time())); break;
         }
         $data = $receivablesPlanModel->getDataList($param);
         if ($types == 'list') {
