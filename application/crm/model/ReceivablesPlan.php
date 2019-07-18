@@ -69,6 +69,8 @@ class ReceivablesPlan extends Common
             ->join('__CRM_CONTRACT__ contract','receivables_plan.contract_id = contract.contract_id','LEFT')
             ->join('__CRM_CUSTOMER__ customer','receivables_plan.customer_id = customer.customer_id','LEFT')
             ->where($map)
+            ->whereOr($maps)
+            ->whereOr($mapss)
             ->count('plan_id');
         foreach ($list as $k=>$v) {
             $list[$k]['create_user_id_info'] = $userModel->getUserById($v['create_user_id']);
