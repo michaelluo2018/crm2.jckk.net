@@ -41,6 +41,7 @@ class ReceivablesPlan extends Common
         unset($request['user_id']);
 
         $request = $this->fmtRequest( $request );
+        halt($request);
         $map = $request['map'] ? : [];
         if (isset($map['search'])) {
             //普通筛选
