@@ -71,7 +71,6 @@ class ReceivablesPlan extends Common
             ->where($map)
             ->count('plan_id');
         foreach ($list as $k=>$v) {
-            halt($v);
             $list[$k]['create_user_id_info'] = $userModel->getUserById($v['create_user_id']);
             $list[$k]['contract_id_info']['name'] = $v['contract_name'] ? : '';
             $list[$k]['contract_id_info']['contract_id'] = $v['contract_id'] ? : '';
