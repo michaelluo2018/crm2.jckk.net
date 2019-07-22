@@ -49,7 +49,7 @@ class ReceivablesPlan extends Common
             $map = where_arr($map, 'crm', 'receivables_plan', 'index'); //高级筛选
         }
         if ($map['receivables_plan.owner_user_id']) {
-            $map['contract.owner_user_id'] = $map['receivables_plan.owner_user_id'];不在此处使用
+            $map['contract.owner_user_id'] = $map['receivables_plan.owner_user_id'];
             unset($map['receivables_plan.owner_user_id']);
         }
         $list = db('crm_receivables_plan')
@@ -66,7 +66,7 @@ class ReceivablesPlan extends Common
             ->join('__CRM_CONTRACT__ contract','receivables_plan.contract_id = contract.contract_id','LEFT')
             ->join('__CRM_CUSTOMER__ customer','receivables_plan.customer_id = customer.customer_id','LEFT')
             ->where($map)
-            
+         
             ->count('plan_id');
         foreach ($list as $k=>$v) {
             $list[$k]['create_user_id_info'] = $userModel->getUserById($v['create_user_id']);
