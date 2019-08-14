@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | Description: 任务列表
 // +----------------------------------------------------------------------
-// | 
+// |
 // +----------------------------------------------------------------------
 
 namespace app\work\controller;
@@ -19,16 +19,16 @@ class taskclass extends ApiCommon
      * @permission 无限制
      * @allow 登录用户可访问
      * @other 其他根据系统设置
-    **/    
+     **/
     public function _initialize()
     {
         $action = [
             'permission'=>[''],
-            'allow'=>['index','save','rename','delete']         
+            'allow'=>['index','save','rename','delete']
         ];
         Hook::listen('check_auth',$action);
         $request = Request::instance();
-        $a = strtolower($request->action());        
+        $a = strtolower($request->action());
         if (!in_array($a, $action['permission'])) {
             parent::_initialize();
         }
@@ -38,7 +38,7 @@ class taskclass extends ApiCommon
      * 添加任务列表
      * @author yykun
      * @return
-     */ 
+     */
     public function save()
     {
         $param = $this->param;
@@ -49,8 +49,8 @@ class taskclass extends ApiCommon
         //权限判断
         if (!$workModel->isCheck('work','taskClass','save',$param['work_id'],$userInfo['id'])) {
             header('Content-Type:application/json; charset=utf-8');
-            exit(json_encode(['code'=>102,'error'=>'无权操作']));            
-        }        
+            exit(json_encode(['code'=>102,'error'=>'无权操作']));
+        }
         $param['create_user_id'] = $userInfo['id'];
         $res = $workClassModel->createData($param);
         if ($res) {
@@ -73,12 +73,12 @@ class taskclass extends ApiCommon
         if (!$param['name'] || !$param['class_id']) return resultArray(['error'=>'参数错误']);
         $classInfo = db('work_task_class')->where(['class_id' => $param['class_id']])->find();
         $userInfo = $this->userInfo;
-		$param['create_user_id'] = $userInfo['id']; 
+        $param['create_user_id'] = $userInfo['id'];
         //权限判断
         if (!$workModel->isCheck('work','taskClass','update',$classInfo['work_id'],$userInfo['id'])) {
             header('Content-Type:application/json; charset=utf-8');
-            exit(json_encode(['code'=>102,'error'=>'无权操作']));            
-        }        
+            exit(json_encode(['code'=>102,'error'=>'无权操作']));
+        }
         $res = $workClassModel->rename($param);
         if ($res) {
             return resultArray(['data'=>'编辑成功']);
@@ -88,7 +88,7 @@ class taskclass extends ApiCommon
     }
 
     /**
-     * 删除任务列表(该分类下任务也要删除)
+     * 删除任务列表(该分类下任务标记删除)
      * @author yykun
      * @return
      */
@@ -100,17 +100,17 @@ class taskclass extends ApiCommon
         if (!$param['class_id']) return resultArray(['error'=>'参数错误']);
         $classInfo = db('work_task_class')->where(['class_id' => $param['class_id']])->find();
         $userInfo = $this->userInfo;
-		$param['create_user_id'] = $userInfo['id']; 
+        $param['create_user_id'] = $userInfo['id'];
         //权限判断
         if (!$workModel->isCheck('work','taskClass','delete',$classInfo['work_id'],$userInfo['id'])) {
             header('Content-Type:application/json; charset=utf-8');
-            exit(json_encode(['code'=>102,'error'=>'无权操作']));            
-        }          
+            exit(json_encode(['code'=>102,'error'=>'无权操作']));
+        }
         $res = $workClassModel->deleteById($param);
         if ($res) {
             return resultArray(['data'=>'删除成功']);
         } else {
             return resultArray(['error'=>$workClassModel->getError()]);
         }
-    }      
+    }
 }

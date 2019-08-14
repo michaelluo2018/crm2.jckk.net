@@ -224,7 +224,7 @@ class Contract extends ApiCommon
 
         //数据权限判断
         $userModel = new \app\admin\model\User();
-        $auth_user_ids = $userModel->getUserByPer('crm', 'business', 'delete');
+        $auth_user_ids = $userModel->getUserByPer('crm', 'contract', 'delete');
         $adminTypes = adminGroupTypes($userInfo['id']);
         foreach ($contract_id as $k=>$v) {
             $isDel = true;
@@ -400,7 +400,7 @@ class Contract extends ApiCommon
             $is_end = 1;
             $contractData['check_status'] = 3;
             //将审批记录至为无效
-            // $examineRecordModel->setEnd(['types' => 'crm_contract','types_id' => $param['id']]);                           
+            // $examineRecordModel->setEnd(['types' => 'crm_contract','types_id' => $param['id']]);
         }
         //已审批人ID
         $resContract['flow_user_id'] = stringToArray($dataInfo['flow_user_id']) ? arrayToString(array_merge(stringToArray($dataInfo['flow_user_id']),[$user_id])) : arrayToString([$user_id]);
@@ -455,7 +455,7 @@ class Contract extends ApiCommon
         $contractData['check_status'] = 0; //0待审核，1审核通中，2审核通过，3审核未通过
         //审批主体详情
         $dataInfo = $contractModel->getDataById($param['id']);
-        //权限判断(负责人或管理员)        
+        //权限判断(负责人或管理员)
         if ($dataInfo['check_status'] == 2) {
             return resultArray(['error' => '已审批结束,不能撤销']);
         }

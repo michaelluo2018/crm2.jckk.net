@@ -10,6 +10,7 @@ namespace app\crm\controller;
 use app\admin\controller\ApiCommon;
 use think\Hook;
 use think\Request;
+use think\Db;
 
 class Receivables extends ApiCommon
 {
@@ -91,9 +92,12 @@ class Receivables extends ApiCommon
         //流程审批人
         // $flow_user_id = $examineFlowModel->getUserByFlow($examineFlowData['flow_id'], $param['owner_user_id']);
         // $param['flow_user_id'] = $flow_user_id ? arrayToString($flow_user_id) : '';
-
         $res = $receivablesModel->createData($param);
         if ($res) {
+            //回款计划关联
+            if ($param['plan_id']) {
+                db('crm_receivables_plan')->where(['plan_id' => $param['plan_id']])->update(['receivables_id' => $res['receivables_id']]);
+            }
             return resultArray(['data' => '添加成功']);
         } else {
             return resultArray(['error' => $receivablesModel->getError()]);
@@ -328,7 +332,7 @@ class Receivables extends ApiCommon
             $is_end = 1;
             $receivablesData['check_status'] = 3;
             //将审批记录至为无效
-            // $examineRecordModel->setEnd(['types' => 'crm_receivables','types_id' => $param['id']]);                       
+            // $examineRecordModel->setEnd(['types' => 'crm_receivables','types_id' => $param['id']]);
         }
         //已审批人ID
         $receivablesData['flow_user_id'] = stringToArray($dataInfo['flow_user_id']) ? arrayToString(array_merge(stringToArray($dataInfo['flow_user_id']),[$user_id])) : arrayToString([$user_id]);

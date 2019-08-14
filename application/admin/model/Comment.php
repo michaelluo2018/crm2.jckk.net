@@ -26,7 +26,12 @@ class Comment extends Model
         'status' => 1,
     ];
 
-	//根据ID查看评论
+    /**
+     * 根据ID查看评论
+     * @author Michael_xu
+     * @param
+     * @return
+     */
     public function read($param)
     {
         $userModel = new \app\admin\model\User();
@@ -54,7 +59,13 @@ class Comment extends Model
         }
         return $list;
     }
-	//获取回复
+
+    /**
+     * 获取回复
+     * @author Michael_xu
+     * @param
+     * @return
+     */
     function commentList($parent_id = 0,&$result = array())
     {
         $list = $this->where(['status' => 1,'reply_id' => $parent_id])->order("create_time desc")->select();
@@ -67,8 +78,13 @@ class Comment extends Model
         }
         return $result ? : [];
     }
-	
-	//新建评论 
+
+    /**
+     * 新建评论
+     * @author Michael_xu
+     * @param
+     * @return
+     */
     public function createData($param)
     {
         $param['reply_content'] = $param['reply_content'] ? : '';  //内容拼接保存
@@ -85,7 +101,12 @@ class Comment extends Model
         }
     }
 
-	//删除评论
+    /**
+     * 删除评论
+     * @author Michael_xu
+     * @param
+     * @return
+     */
     public function delDataById($param)
     {
         if ($param['comment_id']) {
@@ -98,5 +119,20 @@ class Comment extends Model
             return false;
         }
         return true;
+    }
+
+    /**
+     * 获取评论数
+     * @author Michael_xu
+     * @param
+     * @return
+     */
+    public function getCount($type,$type_id)
+    {
+        $count = 0;
+        if ($type && $type_id) {
+            $count = $this->where(['type' => $type,'type_id' => $type_id])->count();
+        }
+        return $count;
     }
 }

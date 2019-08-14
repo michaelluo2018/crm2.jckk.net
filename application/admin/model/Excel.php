@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | Description: 自定义字段模块数据Excel导入导出
 // +----------------------------------------------------------------------
-// |
+// | 
 // +----------------------------------------------------------------------
 
 namespace app\admin\model;
@@ -54,7 +54,7 @@ class Excel extends Common
         $objProps->setCategory("crm"); //种类
         $objPHPExcel->setActiveSheetIndex(0); //设置当前的sheet
         $objActSheet = $objPHPExcel->getActiveSheet();
-        $objActSheet->setTitle('CRM系统导入模板'.date('Y-m-d',time())); //设置sheet的标题
+        $objActSheet->setTitle('crm软件导入模板'.date('Y-m-d',time())); //设置sheet的标题	
 
         //存储Excel数据源到其他工作薄
         $objPHPExcel->createSheet();
@@ -163,7 +163,7 @@ class Excel extends Common
             case 'crm_bbusiness' : $types_name = '项目信息'; break;
             case 'crm_contract' : $types_name = '合同信息'; break;
             case 'crm_receivables' : $types_name = '回款信息'; break;
-            default : $types_name = 'CRM系统'; break;
+            default : $types_name = 'crm软件'; break;
         }
         $content = $types_name.'（*代表必填项）';
         $objActSheet->setCellValue('A1', $content);
@@ -187,7 +187,8 @@ class Excel extends Common
     {
         $fieldModel = new \app\admin\model\Field();
         ini_set('memory_limit','1024M');
-        set_time_limit (0);
+        ini_set('max_execution_time','300');
+        // set_time_limit(0);
 
         //调试时，先把下面这个两个header注释即可
         header("Access-Control-Expose-Headers: Content-Disposition");
@@ -202,27 +203,37 @@ class Excel extends Common
         // 加上bom头，防止用office打开时乱码
         echo "\xEF\xBB\xBF"; 	// UTF-8 BOM
 
-        // 打开PHP文件句柄，php://output 表示直接输出到浏览器
+        // 打开PHP文件句柄，php://output 表示直接输出到浏览器  
         $fp = fopen('php://output', 'a');
 
-        // 将中文标题转换编码，否则乱码
+        // 将中文标题转换编码，否则乱码  
         foreach ($field_list as $i => $v) {
             $title_cell[$i] = $v['name'];
         }
-        // 将标题名称通过fputcsv写到文件句柄
+        // 将标题名称通过fputcsv写到文件句柄    
         fputcsv($fp, $title_cell);
         // $export_data = $callback(0);
-        cache($file_name, $callback(0));
-        // p(cache($file_name));
-        foreach (cache($file_name)['list'] as $item) {
-            $rows = [];
-            foreach ($field_list as $rule) {
-                $rows[] = $fieldModel->getValueByFormtype($item[$rule['field']], $rule['form_type']);
+        $round = round(1000,9999);
+        cache($file_name.$round, $callback(0));
+        $sheetContent = cache($file_name.$round)['list'];
+
+        $sheetCount = $callback(0)['dataCount'];
+        $forCount = 1000; //每次取出1000个
+        for ($i = 0; $i <= ceil(round($sheetCount/$forCount,2)); $i++){
+            $_sub = array_slice($sheetContent, ($i)*$forCount, 1000);
+            foreach ($_sub as $kk => $item) {
+                $rows = [];
+                foreach ($field_list as $rule) {
+                    $rows[] = $fieldModel->getValueByFormtype($item[$rule['field']], $rule['form_type']);
+                }
+                fputcsv($fp, $rows);
             }
-            fputcsv($fp, $rows);
+            ob_flush();//清除内存
+            flush();
         }
-        // 将已经写到csv中的数据存储变量销毁，释放内存占用
+        // 将已经写到csv中的数据存储变量销毁，释放内存占用  
         //$m = memory_get_usage();
+        Cache::rm($file_name.$round);
         ob_flush();
         flush();
         fclose($fp);
@@ -253,7 +264,7 @@ class Excel extends Common
                 $this->error = $file->getError();
                 return false;
             }
-            $saveName = $info->getSaveName(); //保存路径
+            $saveName = $info->getSaveName(); //保存路径	
             $ext = $info->getExtension(); //文件后缀
             if (!$saveName) {
                 $this->error = '文件上传失败，请重试！';
@@ -294,7 +305,7 @@ class Excel extends Common
             $sheetCount = $ExcelObj->getSheet(0)->getHighestRow();
             // if ($sheetCount > 2002) {
             // $this->error = '';
-            // return false;
+            // return false; 	        	
             // }
             //放入缓存
             cache($savePath, $ExcelObj->getSheet(0)->toArray());
@@ -413,7 +424,7 @@ class Excel extends Common
                                 if ($contactsInfo) {
                                     $resContacts = true;
                                 }
-                                // if ($contactsFieldArr[$fieldName]['field'] == 'name') $contactsName = $contactsInfo;
+                                // if ($contactsFieldArr[$fieldName]['field'] == 'name') $contactsName = $contactsInfo;	
                                 $resContactsList = [];
                                 $resContactsList = $this->sheetData($contacts_k, $contactsFieldArr, $fieldName, $contactsInfo);
                                 $resContactsData[] = $resContactsList['data'];
@@ -438,7 +449,7 @@ class Excel extends Common
                     if ($resNameIds && $data) {
                         if ($config == 1 && $resNameIds) {
                             $data['user_id'] = $param['create_user_id'];
-                            //覆盖数据（以名称为查重规则，如存在则覆盖原数据）
+                            //覆盖数据（以名称为查重规则，如存在则覆盖原数据）	
                             foreach ($resNameIds as $nid) {
                                 $upRes = $dataModel->updateDataById($data, $nid);
                                 if (!$upRes) {
@@ -463,7 +474,7 @@ class Excel extends Common
                 }
                 // ob_flush();
                 // flush();
-                unset($_sub);//用完及时销毁
+                unset($_sub);//用完及时销毁									
             }
             // unset($sheetContent);
 
@@ -642,11 +653,60 @@ class Excel extends Common
             $savename = urlencode($savename); //处理IE导出名称乱码
         }
 
-        // excel头参数
+        // excel头参数  
         header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="'.$savename.'.xls"');  //日期为文件名后缀
+        header('Content-Disposition: attachment;filename="'.$savename.'.xls"');  //日期为文件名后缀  
         header('Cache-Control: max-age=0');
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');  //excel5为xls格式，excel2007为xlsx格式
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');  //excel5为xls格式，excel2007为xlsx格式  
         $objWriter->save('php://output');
+    }
+
+    /**
+     * 非自定义字段模块导出csv
+     * @param $file_name 导出文件名称
+     * @param $field_list 导出字段列表
+     * @param $callback 回调函数，查询需要导出的数据
+     * @author
+     **/
+    public function dataExportCsv($file_name, $field_list, callback $callback)
+    {
+        ini_set('memory_limit','128M');
+        set_time_limit (0);
+
+        //调试时，先把下面这个两个header注释即可
+        header("Access-Control-Expose-Headers: Content-Disposition");
+        header("Content-type:application/vnd.ms-excel;charset=UTF-8");
+        header("Content-Disposition:attachment;filename=" . $file_name . ".csv");
+
+        header('Expires: 0');
+        header('Cache-control: private');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Content-Description: File Transfer');
+        header('Content-Encoding: UTF-8');
+        // 加上bom头，防止用office打开时乱码
+        echo "\xEF\xBB\xBF"; 	// UTF-8 BOM
+
+        // 打开PHP文件句柄，php://output 表示直接输出到浏览器  
+        $fp = fopen('php://output', 'a');
+
+        // 将中文标题转换编码，否则乱码  
+        foreach ($field_list as $i => $v) {
+            $title_cell[$i] = $v['name'];
+        }
+        // 将标题名称通过fputcsv写到文件句柄    
+        fputcsv($fp, $title_cell);
+        $export_data = $callback(0);
+        foreach ($export_data as $item) {
+            $rows = [];
+            foreach ($field_list as $rule) {
+                $rows[] = $item[$rule['field']];
+            }
+            fputcsv($fp, $rows);
+        }
+        // 将已经写到csv中的数据存储变量销毁，释放内存占用
+        ob_flush();
+        flush();
+        fclose($fp);
+        exit();
     }
 }

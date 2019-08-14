@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | Description: 系统员工
 // +----------------------------------------------------------------------
-// | Author:
+// |
 // +----------------------------------------------------------------------
 
 namespace app\admin\controller;
@@ -337,7 +337,7 @@ class Users extends ApiCommon
             }
         }
         // if ($resData == false) {
-        //     return resultArray(['error' => '操作失败，请重试']);      
+        //     return resultArray(['error' => '操作失败，请重试']);
         // }
         return resultArray(['data' => '创建成功']);
     }
@@ -412,6 +412,9 @@ class Users extends ApiCommon
         $param = $this->param;
         $userInfo = $this->userInfo;
         //权限判断
+        if ($param['id'] == 1) {
+            return resultArray(['error' => '管理员账号暂不能修改']);
+        }
         $adminTypes = adminGroupTypes($userInfo['id']);
         if (!in_array(3,$adminTypes) && !in_array(1,$adminTypes) && !in_array(2,$adminTypes)) {
             header('Content-Type:application/json; charset=utf-8');

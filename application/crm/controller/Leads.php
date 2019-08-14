@@ -203,6 +203,7 @@ class Leads extends ApiCommon
     {
         $leadsModel = model('Leads');
         $customerModel = model('Customer');
+        $fieldModel = new \app\admin\model\Field();
         $param = $this->param;
         $userInfo = $this->userInfo;
         $userModel = new \app\admin\model\User();
@@ -215,7 +216,8 @@ class Leads extends ApiCommon
         foreach ($param['leads_id'] as $leads_id) {
             $data = [];
             $leadsInfo = db('crm_leads')->where(['leads_id' => $leads_id])->find();
-            $data = $leadsInfo ? : [];
+            //字段对照关系处理
+            $data = $fieldModel->getRelevantData('crm_leads',$leadsInfo) ? : [];
             $data['create_user_id'] = $userInfo['id'];
             $data['owner_user_id'] = $userInfo['id'];
             $data['deal_status'] = '未成交';

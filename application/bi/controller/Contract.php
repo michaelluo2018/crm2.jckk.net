@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | Description: 商业智能-员工业绩分析
 // +----------------------------------------------------------------------
-// | 
+// |
 // +----------------------------------------------------------------------
 
 namespace app\bi\controller;
@@ -18,16 +18,16 @@ class Contract extends ApiCommon
      * @permission 无限制
      * @allow 登录用户可访问
      * @other 其他根据系统设置
-    **/    
+     **/
     public function _initialize()
     {
         $action = [
             'permission'=>[''],
-            'allow'=>['analysis','summary']            
+            'allow'=>['analysis','summary']
         ];
         Hook::listen('check_auth',$action);
         $request = Request::instance();
-        $a = strtolower($request->action());        
+        $a = strtolower($request->action());
         if (!in_array($a, $action['permission'])) {
             parent::_initialize();
         }
@@ -42,7 +42,7 @@ class Contract extends ApiCommon
         if (!checkPerByAction('bi', 'contract' , 'read')) {
             header('Content-Type:application/json; charset=utf-8');
             exit(json_encode(['code'=>102,'error'=>'无权操作']));
-        } 
+        }
         $userModel = new \app\admin\model\User();
         $receivablesModel = new \app\bi\model\Receivables();
         $biContractModel = new \app\bi\model\Contract();
@@ -63,7 +63,7 @@ class Contract extends ApiCommon
         $perUserIds = $userModel->getUserByPer('bi', 'customer', 'read'); //权限范围内userIds
         $userIds = $map_user_ids ? array_intersect($map_user_ids, $perUserIds) : $perUserIds; //数组交集
         $datas = array();
-        for ($i=1; $i <= 12; $i++) { 
+        for ($i=1; $i <= 12; $i++) {
             $whereArr = [];
             $whereArr['owner_user_id'] = array('in',$userIds);
             $item = array();
@@ -115,7 +115,7 @@ class Contract extends ApiCommon
                 $whereArr['return_time'] = $create_time;
                 $item['lastMonth'] = $receivablesModel->getDataMoney($whereArr);
             }
-            
+
             //去年当月
             $start_time = ($year-1).'-'.$i.'-01';
             $end_time = ($year-1).'-'.($i+1).'-01';
@@ -136,7 +136,7 @@ class Contract extends ApiCommon
                 $whereArr['return_time'] = $create_time;
                 $item['lastYeatMonth'] = $receivablesModel->getDataMoney($whereArr);
             }
-            
+
             // //去年上月
             if($i == 1){
                 $start_time = ($year-2).'-12-01';
@@ -158,7 +158,7 @@ class Contract extends ApiCommon
                 $whereArr['return_time'] = $create_time;
                 $item['lastYeatLastMonth'] = $receivablesModel->getDataMoney($whereArr);
             }
-            
+
             //环比增长
             if($item['month']==0 || $item['lastMonth']==0){
                 $item['chain_ratio'] = 0;
@@ -175,7 +175,7 @@ class Contract extends ApiCommon
         }
         return resultArray(['data' => $datas]);
     }
-    
+
     /**
      * 合同汇总表
      * @return [type] [description]
@@ -185,13 +185,13 @@ class Contract extends ApiCommon
         if (!checkPerByAction('bi', 'contract' , 'read')) {
             header('Content-Type:application/json; charset=utf-8');
             exit(json_encode(['code'=>102,'error'=>'无权操作']));
-        } 
+        }
         $userModel = new \app\admin\model\User();
         $receivablesModel = new \app\bi\model\Receivables();
         $biContractModel = new \app\bi\model\Contract();
         $biCustomerModel = new \app\bi\model\Customer();
         $param = $this->param;
-        
+
         if(empty($param['type']) && empty($param['start_time'])){
             $param['type'] = 'month';
         }
@@ -207,7 +207,7 @@ class Contract extends ApiCommon
         $userIds = $map_user_ids ? array_intersect($map_user_ids, $perUserIds) : $perUserIds; //数组交集
         $company = $biCustomerModel->getParamByCompany($param);
         $datas = array();
-        for ($i=1; $i <= $company['j']; $i++) { 
+        for ($i=1; $i <= $company['j']; $i++) {
             $whereArr = [];
             $whereArr['owner_user_id'] = array('in',$userIds);
             $whereArr['check_status'] = array('eq',2);
@@ -220,7 +220,10 @@ class Contract extends ApiCommon
             $next_day = $timeArr['next_day']?$timeArr['next_day']:'1';
             $end_time = $timeArr['next_year'].'-'.$timeArr['next_month'].'-'.$next_day;
             $create_time = [];
-            if ($start_time && $end_time) {
+
+            if((int)$next_day-(int)$day == 1){
+                $create_time = $start_time;
+            }else{
                 $create_time = array('between',array($start_time,$end_time));
             }
             $where = array();
@@ -235,15 +238,17 @@ class Contract extends ApiCommon
             $datas['items'][] = $item;
         }
         if(!empty($param['start_time'])){
-            $whereArr['create_time'] = array('between',array($param['start_time'],$param['end_time']));
+            $whereArr['order_date'] = array('between',array($param['start_time'],$param['end_time']));
         }else{
             $create_time = getTimeByType($param['type']);
             if ($create_time) {
-                $whereArr['create_time'] = array('between',array($create_time[0],$create_time[1]));
+                $whereArr['order_date'] = array('between',array(date('Y-m-d',$create_time[0]),date('Y-m-d',$create_time[1])));
             }
         }
         $datas['count_zong'] = $biContractModel->getDataCount($whereArr);
         $datas['money_zong'] = $biContractModel->getDataMoney($whereArr);
+        $whereArr['return_time'] = $whereArr['order_date'];
+        unset($whereArr['order_date']);
         $datas['back_zong'] = $receivablesModel->getDataMoney($whereArr);
         $datas['w_back_zong'] = $datas['money_zong']-$datas['back_zong'];
         return resultArray(['data' => $datas]);

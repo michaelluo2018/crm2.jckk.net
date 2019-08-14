@@ -13,6 +13,7 @@ return [
 
     // 【仪表盘】销售简报
     'crm/index/index' => ['crm/index/index', ['method' => 'POST']],
+    'crm/index/indexList' => ['crm/index/indexList', ['method' => 'POST']],
 
     // 【客户】列表
     'crm/customer/index' => ['crm/customer/index', ['method' => 'POST']],
@@ -42,7 +43,7 @@ return [
     'crm/customer/statistics' => ['crm/customer/statistics', ['method' => 'POST']],
     // 【客户】合同
     'crm/customer/contract' => ['crm/customer/contract', ['method' => 'POST']],
-    // 【客户】项目
+    // 【客户】商机
     'crm/customer/business' => ['crm/customer/business', ['method' => 'POST']],
     // 【客户】删除
     'crm/customer/delete' => ['crm/customer/delete', ['method' => 'POST']],
@@ -98,25 +99,25 @@ return [
     // 【联系人】导入
     'crm/contacts/excelImport' => ['crm/contacts/excelImport', ['method' => 'POST']],
 
-    // 【项目】列表
+    // 【商机】列表
     'crm/business/index' => ['crm/business/index', ['method' => 'POST']],
-    // 【项目】创建
+    // 【商机】创建
     'crm/business/save' => ['crm/business/save', ['method' => 'POST']],
-    // 【项目】编辑
+    // 【商机】编辑
     'crm/business/update' => ['crm/business/update', ['method' => 'POST']],
-    // 【项目】详情
+    // 【商机】详情
     'crm/business/read' => ['crm/business/read', ['method' => 'POST']],
-    // 【项目】状态组
+    // 【商机】状态组
     'crm/business/statusList' => ['crm/business/statusList', ['method' => 'POST']],
-    // 【项目】转移
+    // 【商机】转移
     'crm/business/transfer' => ['crm/business/transfer', ['method' => 'POST']],
-    // 【项目】相关产品
+    // 【商机】相关产品
     'crm/business/product' => ['crm/business/product', ['method' => 'POST']],
-    // 【项目】项目状态推进
+    // 【商机】商机状态推进
     'crm/business/advance' => ['crm/business/advance', ['method' => 'POST']],
-    // 【项目】漏斗
+    // 【商机】漏斗
     'crm/business/funnel' => ['crm/business/funnel', ['method' => 'POST']],
-    // 【项目】删除
+    // 【商机】删除
     'crm/business/delete' => ['crm/business/delete', ['method' => 'POST']],
 
     // 【合同】列表
@@ -200,17 +201,17 @@ return [
     // 【合同到期提醒】
     'crm/setting/contractDay' => ['crm/setting/contractDay', ['method' => 'POST']],
 
-    // 【项目状态组】列表
+    // 【商机状态组】列表
     'crm/business_status/type' => ['crm/business_status/type', ['method' => 'POST']],
-    // 【项目状态组】创建
+    // 【商机状态组】创建
     'crm/business_status/save' => ['crm/business_status/save', ['method' => 'POST']],
-    // 【项目状态组】编辑
+    // 【商机状态组】编辑
     'crm/business_status/update' => ['crm/business_status/update', ['method' => 'POST']],
-    // 【项目状态组】详情
+    // 【商机状态组】详情
     'crm/business_status/read' => ['crm/business_status/read', ['method' => 'POST']],
-    // 【项目状态组】停用
+    // 【商机状态组】停用
     'crm/business_status/enables' => ['crm/business_status/enables', ['method' => 'POST']],
-    // 【项目状态组】删除
+    // 【商机状态组】删除
     'crm/business_status/delete' => ['crm/business_status/delete', ['method' => 'POST']],
 
     // 【产品分类】列表
@@ -256,7 +257,7 @@ return [
     'crm/setting/recordList' => ['crm/setting/recordList', ['method' => 'POST']],
     // 【跟进记录类型设置】记录类型编辑
     'crm/setting/recordEdit' => ['crm/setting/recordEdit', ['method' => 'POST']],
-    // 【客户】联系人项目关联/取消关联
+    // 【客户】联系人商机关联/取消关联
     'crm/contacts/relation' => ['crm/contacts/relation', ['method' => 'POST']],
 
     // 【公海】数据统计 导出
@@ -267,7 +268,7 @@ return [
     'crm/setting/recordList' => ['crm/setting/recordList', ['method' => 'POST']],
     // 【跟进记录类型设置】记录类型编辑
     'crm/setting/recordEdit' => ['crm/setting/recordEdit', ['method' => 'POST']],
-    // 【客户】联系人项目关联/取消关联
+    // 【客户】联系人商机关联/取消关联
     'crm/contacts/relation' => ['crm/contacts/relation', ['method' => 'POST']],
 
     // 【公海】数据统计 导出
