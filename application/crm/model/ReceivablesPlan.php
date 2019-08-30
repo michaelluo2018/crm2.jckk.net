@@ -79,11 +79,6 @@ class ReceivablesPlan extends Common
             ->field('receivables_plan.*,customer.name as customer_name,contract.num as contract_name,receivables.receivables_id,receivables.check_status')
             ->where($map)
             ->where($whereData)
-            ->where(
-                function($query) use($request){
-                    $request && $query->where('contract.owner_user_id',$request['map']['owner_user_id'])->whereOr('contract.ro_user_id|contract.rw_user_id','like','%,'.$request['map']['owner_user_id'].',%');
-                }
-            )
             ->select();
         $dataCount = db('crm_receivables_plan')
             ->alias('receivables_plan')
@@ -92,11 +87,6 @@ class ReceivablesPlan extends Common
             ->join('__CRM_RECEIVABLES__ receivables','receivables_plan.plan_id = receivables.plan_id','LEFT')
             ->where($map)
             ->where($whereData)
-            ->where(
-                function($query) use($request){
-                    $request && $query->where('contract.owner_user_id',$request['map']['owner_user_id'])->whereOr('contract.ro_user_id|contract.rw_user_id','like','%,'.$request['map']['owner_user_id'].',%');
-                }
-            )
             ->count('receivables_plan.plan_id');
         foreach ($list as $k=>$v) {
             $list[$k]['create_user_id_info'] = $userModel->getUserById($v['create_user_id']);
