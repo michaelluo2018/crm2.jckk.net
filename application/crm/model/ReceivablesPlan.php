@@ -71,9 +71,9 @@ class ReceivablesPlan extends Common
             }
         }
         if(empty($user_id)){
-            echo 1;die();
             $user_id = $request['map']['owner_user_id'];
         }
+        halt($user_id);
         $list = db('crm_receivables_plan')
             ->alias('receivables_plan')
             ->join('__CRM_CONTRACT__ contract','receivables_plan.contract_id = contract.contract_id','LEFT')
