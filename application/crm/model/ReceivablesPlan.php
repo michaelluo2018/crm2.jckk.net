@@ -71,6 +71,7 @@ class ReceivablesPlan extends Common
             }
         }
         if(empty($user_id)){
+            echo 1;die();
             $user_id = $request['map']['owner_user_id'];
         }
         $list = db('crm_receivables_plan')
