@@ -88,6 +88,22 @@ class ReceivablesPlan extends Common
                 }
             )
             ->select();
+        echo db('crm_receivables_plan')
+            ->alias('receivables_plan')
+            ->join('__CRM_CONTRACT__ contract','receivables_plan.contract_id = contract.contract_id','LEFT')
+            ->join('__CRM_CUSTOMER__ customer','receivables_plan.customer_id = customer.customer_id','LEFT')
+            ->join('__CRM_RECEIVABLES__ receivables','receivables_plan.plan_id = receivables.plan_id','LEFT')
+            ->limit(($request['page']-1)*$request['limit'], $request['limit'])
+            ->field('receivables_plan.*,customer.name as customer_name,contract.num as contract_name,receivables.receivables_id,receivables.check_status')
+            ->where($map)
+            ->where($whereData)
+            ->where(
+                function($query) use($user_id){
+                    $user_id && $query->where('contract.owner_user_id',$user_id)->whereOr('contract.ro_user_id|contract.rw_user_id','like','%,'.$user_id.',%');
+                }
+            )
+            ->getLastSql();
+        die();
         $dataCount = db('crm_receivables_plan')
             ->alias('receivables_plan')
             ->join('__CRM_CONTRACT__ contract','receivables_plan.contract_id = contract.contract_id','LEFT')
