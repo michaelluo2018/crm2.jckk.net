@@ -80,7 +80,7 @@ class ReceivablesPlan extends Common
             ->where($map)
             ->where($whereData)
             ->select();
-        $list = db('crm_receivables_plan')
+        echo db('crm_receivables_plan')
             ->alias('receivables_plan')
             ->join('__CRM_CONTRACT__ contract','receivables_plan.contract_id = contract.contract_id','LEFT')
             ->join('__CRM_CUSTOMER__ customer','receivables_plan.customer_id = customer.customer_id','LEFT')
