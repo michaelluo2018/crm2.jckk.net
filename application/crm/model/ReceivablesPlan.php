@@ -55,7 +55,7 @@ class ReceivablesPlan extends Common
             $map['contract.owner_user_id'] = $map['receivables_plan.owner_user_id'];
             unset($map['receivables_plan.owner_user_id']);
         }
-        halt($request);
+        halt($user_id);
         $whereData = [];
         if ($check_status) {
             unset($map['receivables_plan.check_status']);
