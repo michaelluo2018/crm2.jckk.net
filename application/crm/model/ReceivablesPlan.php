@@ -82,13 +82,79 @@ class ReceivablesPlan extends Common
             ->field('receivables_plan.*,customer.name as customer_name,contract.num as contract_name,receivables.receivables_id,receivables.check_status')
             ->where($map)
             ->where($whereData)
-            ->where(
-                function($query) use($user_id){
-                    $user_id && $query->where('contract.owner_user_id',$user_id)->whereOr('contract.ro_user_id|contract.rw_user_id','like','%,'.$user_id.',%');
-                }
-            )
             ->select();
-        echo db('crm_receivables_plan')
+        $dataCount = db('crm_receivables_plan')
+            ->alias('receivables_plan')
+            ->join('__CRM_CONTRACT__ contract','receivables_plan.contract_id = contract.contract_id','LEFT')
+            ->join('__CRM_CUSTOMER__ customer','receivables_plan.customer_id = customer.customer_id','LEFT')
+            ->join('__CRM_RECEIVABLES__ receivables','receivables_plan.plan_id = receivables.plan_id','LEFT')
+            ->where($map)
+            ->where($whereData)
+            ->count('receivables_plan.plan_id');
+        foreach ($list as $k=>$v) {
+            $list[$k]['create_user_id_info'] = $userModel->getUserById($v['create_user_id']);
+            $list[$k]['contract_id_info']['name'] = $v['contract_name'] ? : '';
+            $list[$k]['contract_id_info']['contract_id'] = $v['contract_id'] ? : '';
+            $list[$k]['customer_id_info']['name'] = $v['customer_name'] ? : '';
+            $list[$k]['customer_id_info']['customer_id'] = $v['customer_id'] ? : '';
+        }
+        $data = [];
+        $data['list'] = $list;
+        $data['dataCount'] = $dataCount ? : 0;
+        return $data ? : [];
+    }
+    /**
+     * [getDataList 回款计划代办事项]
+     * @author Michael_xu
+     * @param     [string]                   $map [查询条件]
+     * @param     [number]                   $page     [当前页数]
+     * @param     [number]                   $limit    [每页数量]
+     * @return    [array]                    [description]
+     */
+    public function getDataListMessage($request)
+    {
+        $userModel = new \app\admin\model\User();
+        $search = $request['search'];
+        $user_id = $request['user_id'];
+        $scene_id = (int)$request['scene_id'];
+        $check_status = $request['check_status'];
+        unset($request['scene_id']);
+        unset($request['search']);
+        unset($request['user_id']);
+        unset($request['check_status']);
+
+        $request = $this->fmtRequest( $request );
+        $map = $request['map'] ? : [];
+        if (isset($map['search'])) {
+            //普通筛选
+            $map['name'] = ['like', '%'.$map['search'].'%'];
+            unset($map['search']);
+        } else {
+            $map = where_arr($map, 'crm', 'receivables_plan', 'index'); //高级筛选
+        }
+        if ($map['receivables_plan.owner_user_id']) {
+            $map['contract.owner_user_id'] = $map['receivables_plan.owner_user_id'];
+            unset($map['receivables_plan.owner_user_id']);
+        }
+        $whereData = [];
+        if ($check_status) {
+            unset($map['receivables_plan.check_status']);
+            if ($check_status == 2) {
+                $map['receivables.check_status'] = $check_status;
+            } else {
+                unset($map['receivables_plan.receivables_id']);
+                $data = [];
+                $data['check_status'] = $check_status;
+                $whereData = function($query) use ($data){
+                    $query->where(['receivables_plan.receivables_id'=> ['eq',0]])
+                        ->whereOr(['receivables.check_status' => $data['check_status']]);
+                };
+            }
+        }
+        if(empty($user_id)){
+            $user_id = $request['map']['owner_user_id'];
+        }
+        $list = db('crm_receivables_plan')
             ->alias('receivables_plan')
             ->join('__CRM_CONTRACT__ contract','receivables_plan.contract_id = contract.contract_id','LEFT')
             ->join('__CRM_CUSTOMER__ customer','receivables_plan.customer_id = customer.customer_id','LEFT')
@@ -102,8 +168,7 @@ class ReceivablesPlan extends Common
                     $user_id && $query->where('contract.owner_user_id',$user_id)->whereOr('contract.ro_user_id|contract.rw_user_id','like','%,'.$user_id.',%');
                 }
             )
-            ->getLastSql();
-        die();
+            ->select();
         $dataCount = db('crm_receivables_plan')
             ->alias('receivables_plan')
             ->join('__CRM_CONTRACT__ contract','receivables_plan.contract_id = contract.contract_id','LEFT')

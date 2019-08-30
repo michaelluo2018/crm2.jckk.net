@@ -45,7 +45,7 @@ class Message extends ApiCommon
         $userInfo = $this->userInfo;
         $param['user_id'] = $userInfo['id'];
         $param['module_name'] = 'crm';
-        $data = $messageModel->getDataList($param);
+        $data = $messageModel->getDataListMessage($param);
         return resultArray(['data' => $data]);
     }
 
