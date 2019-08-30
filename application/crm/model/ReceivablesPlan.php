@@ -55,7 +55,6 @@ class ReceivablesPlan extends Common
             $map['contract.owner_user_id'] = $map['receivables_plan.owner_user_id'];
             unset($map['receivables_plan.owner_user_id']);
         }
-        halt($user_id);
         $whereData = [];
         if ($check_status) {
             unset($map['receivables_plan.check_status']);
@@ -71,6 +70,9 @@ class ReceivablesPlan extends Common
                 };
             }
         }
+        if(empty($user_id)){
+            $user_id = $request['map']['owner_user_id'];
+        }
         $list = db('crm_receivables_plan')
             ->alias('receivables_plan')
             ->join('__CRM_CONTRACT__ contract','receivables_plan.contract_id = contract.contract_id','LEFT')
@@ -82,7 +84,7 @@ class ReceivablesPlan extends Common
             ->where($whereData)
             ->where(
                 function($query) use($request){
-                    $request && $query->where('contract.owner_user_id',$request['map']['owner_user_id'])->whereOr('contract.ro_user_id|contract.rw_user_id','like','%,'.$request['map']['owner_user_id'].',%');
+                    $request && $query->where('contract.owner_user_id',$user_id)->whereOr('contract.ro_user_id|contract.rw_user_id','like','%,'.$user_id.',%');
                 }
             )
             ->select();
@@ -97,7 +99,7 @@ class ReceivablesPlan extends Common
             ->where($whereData)
             ->where(
                 function($query) use($request){
-                    $request && $query->where('contract.owner_user_id',$request['map']['owner_user_id'])->whereOr('contract.ro_user_id|contract.rw_user_id','like','%,'.$request['map']['owner_user_id'].',%');
+                    $request && $query->where('contract.owner_user_id',$user_id)->whereOr('contract.ro_user_id|contract.rw_user_id','like','%,'.$user_id.',%');
                 }
             )
             ->getLastSql();
