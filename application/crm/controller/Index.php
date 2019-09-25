@@ -567,7 +567,7 @@ class Index extends ApiCommon
         $where['record.types'] = $types;
         $mo = substr($types, 4);
         $types = 'crm_'.$types;
-        $list = db('crm_admin_record')
+        $list = db('admin_record')
                 ->alias('record')
                 ->join($types,$types.'.'.$mo.'_id = record.types_id','LEFT')
                 ->page($param['page'], $param['limit'])
