@@ -10,6 +10,7 @@ namespace app\crm\controller;
 use app\admin\controller\ApiCommon;
 use think\Hook;
 use think\Request;
+use think\Db;
 
 class Index extends ApiCommon
 {
@@ -566,7 +567,7 @@ class Index extends ApiCommon
         $where['record.create_time'] = ['between',explode(',',$create_time)];
         $where['record.types'] = $types;
         $mo = substr($types, 4);
-        $list = db('admin_record')
+        $list = Db::name('admin_record')
                 ->alias('record')
                 ->join($types,$types.'.'.$mo.'_id = record.types_id','LEFT')
                 ->page($param['page'], $param['limit'])
@@ -574,14 +575,14 @@ class Index extends ApiCommon
                 ->order('create_time desc')
                 ->field('record.*,'.$types.'.name as types_name')
                 ->select();
-        echo db('admin_record')
+        echo Db::name('admin_record')
             ->alias('record')
             ->join($types,$types.'.'.$mo.'_id = record.types_id','LEFT')
             ->page($param['page'], $param['limit'])
             ->where($where)
             ->order('create_time desc')
             ->field('record.*,'.$types.'.name as types_name')->getLastSql();
-        $dataCount = db('admin_record')
+        $dataCount = Db::name('admin_record')
                    ->alias('record')
                    ->where($where)
                    ->count();
