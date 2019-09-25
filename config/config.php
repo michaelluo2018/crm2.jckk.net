@@ -164,6 +164,7 @@ return [
         'path'  => LOG_PATH,
         // 日志记录级别
         'level' => [],
+        'max_files' => '100',
     ],
 
     // +----------------------------------------------------------------------
@@ -186,7 +187,7 @@ return [
         // 缓存前缀
         'prefix' => '',
         // 缓存有效期 0表示永久缓存
-        'expire' => 0,
+        'expire' => 86400*3,
         // 禁用缓存子目录
         'cache_subdir' => false,
     ],
@@ -240,11 +241,14 @@ return [
         'imageW'   => 100,
         // 验证码位数
         'length'   => 4,
-        // 验证成功后是否重置        
+        // 验证成功后是否重置
         'reset'    => true
     ],
     //百度地图apiKey
     'map_ak' => 'g4D9pzuFnwjVVpUCDvQ6vhkSfPDx7V3q',
     //组织简称授权码
     'num_ak' => '',
+
+    // 营销推广 加密key
+    'marketing_key' => 'WsVcHjqWeg8fccRNYufyDuiTtETC7MPC233'
 ];

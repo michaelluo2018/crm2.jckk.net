@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | Description: 自定义字段
 // +----------------------------------------------------------------------
-// | 
+// |  
 // +----------------------------------------------------------------------
 
 namespace app\admin\controller;
@@ -30,29 +30,26 @@ class Field extends ApiCommon
         $a = strtolower($request->action());        
         if (!in_array($a, $action['permission'])) {
             parent::_initialize();
-        }
-        $userInfo = $this->userInfo;
-        //权限判断
-        $unAction = ['getfield','read','config','validates','configindex','columnwidth','uniquefield'];
-        $adminTypes = adminGroupTypes($userInfo['id']);
-        if (!in_array(6,$adminTypes) && !in_array(1,$adminTypes) && !in_array(2,$adminTypes) && !in_array($a, $unAction)) {
-            header('Content-Type:application/json; charset=utf-8');
-            exit(json_encode(['code'=>102,'error'=>'无权操作']));
-        }         
+        }        
     }
     
     /**
      * 自定义字段列表
      */
     public function index()
-    {       
+    {  
+        //权限判断
+        if (!checkPerByAction('admin', 'crm', 'field')) {
+            header('Content-Type:application/json; charset=utf-8');
+            exit(json_encode(['code'=>102,'error'=>'无权操作']));
+        }         
         $param = $this->param;
         $types_arr = [
-            '0' => ['types' => 'crm_leads','name' => '线索管理'],
+            '0' => ['types' => 'crm_leads','name' => '项目管理'],
             '1' => ['types' => 'crm_customer','name' => '客户管理'],
             '2' => ['types' => 'crm_contacts','name' => '联系人管理'],
             '3' => ['types' => 'crm_product','name' => '产品管理'],
-            '4' => ['types' => 'crm_business','name' => '项目管理'],
+            '4' => ['types' => 'crm_business','name' => '商机管理'],
             '5' => ['types' => 'crm_contract','name' => '合同管理'],
             '6' => ['types' => 'crm_receivables','name' => '回款管理'],
         ];
@@ -88,6 +85,11 @@ class Field extends ApiCommon
      */
     public function update()
     {
+        //权限判断
+        if (!checkPerByAction('admin', 'crm', 'field')) {
+            header('Content-Type:application/json; charset=utf-8');
+            exit(json_encode(['code'=>102,'error'=>'无权操作']));
+        }        
         $fieldModel = model('Field');
         $param = $this->param;
         $types = $data['types'] = $param['types'];

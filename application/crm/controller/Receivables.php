@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | Description: 回款
 // +----------------------------------------------------------------------
-// |
+// | 
 // +----------------------------------------------------------------------
 
 namespace app\crm\controller;
@@ -19,41 +19,41 @@ class Receivables extends ApiCommon
      * @permission 无限制
      * @allow 登录用户可访问
      * @other 其他根据系统设置
-     **/
+    **/    
     public function _initialize()
     {
         $action = [
             'permission'=>[''],
-            'allow'=>['check','revokecheck']
+            'allow'=>['check','revokecheck']            
         ];
         Hook::listen('check_auth',$action);
         $request = Request::instance();
-        $a = strtolower($request->action());
+        $a = strtolower($request->action());        
         if (!in_array($a, $action['permission'])) {
             parent::_initialize();
         }
-    }
+    } 
 
     /**
      * 回款列表
      * @author Michael_xu
-     * @return
+     * @return 
      */
     public function index()
     {
         $receivablesModel = model('Receivables');
         $param = $this->param;
         $userInfo = $this->userInfo;
-        $param['user_id'] = $userInfo['id'];
-        $data = $receivablesModel->getDataList($param);
+        $param['user_id'] = $userInfo['id'];        
+        $data = $receivablesModel->getDataList($param);       
         return resultArray(['data' => $data]);
     }
 
     /**
      * 添加回款
      * @author Michael_xu
-     * @param
-     * @return
+     * @param 
+     * @return 
      */
     public function save()
     {
@@ -64,34 +64,37 @@ class Receivables extends ApiCommon
         $param['create_user_id'] = $userInfo['id'];
         $param['owner_user_id'] = $userInfo['id'];
 
-        //审核判断（是否有符合条件的审批流）
-        $examineFlowModel = new \app\admin\model\ExamineFlow();
-        if (!$examineFlowModel->checkExamine($param['owner_user_id'], 'crm_receivables')) {
-            return resultArray(['error' => '暂无审批人，无法创建']);
+        if ($param['is_draft']) {
+            //保存为草稿
+            $param['check_status'] = 5; //草稿(未提交)
+            $param['check_user_id'] = $param['check_user_id'] ? ','.$param['check_user_id'].',' : '';
+        } else {        
+            //审核判断（是否有符合条件的审批流）
+            $examineFlowModel = new \app\admin\model\ExamineFlow();
+            if (!$examineFlowModel->checkExamine($param['owner_user_id'], 'crm_receivables')) {
+                return resultArray(['error' => '暂无审批人，无法创建']); 
+            }
+            //添加审批相关信息
+            $examineFlowData = $examineFlowModel->getFlowByTypes($param['owner_user_id'], 'crm_receivables');
+            if (!$examineFlowData) {
+                return resultArray(['error' => '无可用审批流，请联系管理员']);
+            }
+            $param['flow_id'] = $examineFlowData['flow_id'];
+            //获取审批人信息
+            if ($examineFlowData['config'] == 1) {
+                //固定审批流
+                $nextStepData = $examineStepModel->nextStepUser($userInfo['id'], $examineFlowData['flow_id'], 'crm_receivables', 0, 0, 0);
+                $next_user_ids = arrayToString($nextStepData['next_user_ids']) ? : '';
+                $check_user_id = $next_user_ids ? : [];
+                $param['order_id'] = 1;
+            } else {
+                $check_user_id = $param['check_user_id'] ? ','.$param['check_user_id'].',' : '';
+            }
+            if (!$check_user_id) {
+                return resultArray(['error' => '无可用审批人，请联系管理员']);
+            }
+            $param['check_user_id'] = is_array($check_user_id) ? ','.implode(',',$check_user_id).',' : $check_user_id;
         }
-        //添加审批相关信息
-        $examineFlowData = $examineFlowModel->getFlowByTypes($param['owner_user_id'], 'crm_receivables');
-        if (!$examineFlowData) {
-            return resultArray(['error' => '无可用审批流，请联系管理员']);
-        }
-        $param['flow_id'] = $examineFlowData['flow_id'];
-        //获取审批人信息
-        if ($examineFlowData['config'] == 1) {
-            //固定审批流
-            $nextStepData = $examineStepModel->nextStepUser($userInfo['id'], $examineFlowData['flow_id'], 'crm_receivables', 0, 0, 0);
-            $next_user_ids = arrayToString($nextStepData['next_user_ids']) ? : '';
-            $check_user_id = $next_user_ids ? : [];
-            $param['order_id'] = 1;
-        } else {
-            $check_user_id = $param['check_user_id'] ? ','.$param['check_user_id'].',' : '';
-        }
-        if (!$check_user_id) {
-            return resultArray(['error' => '无可用审批人，请联系管理员']);
-        }
-        $param['check_user_id'] = is_array($check_user_id) ? ','.implode(',',$check_user_id).',' : $check_user_id;
-        //流程审批人
-        // $flow_user_id = $examineFlowModel->getUserByFlow($examineFlowData['flow_id'], $param['owner_user_id']);
-        // $param['flow_user_id'] = $flow_user_id ? arrayToString($flow_user_id) : '';
         $res = $receivablesModel->createData($param);
         if ($res) {
             //回款计划关联
@@ -107,8 +110,8 @@ class Receivables extends ApiCommon
     /**
      * 回款详情
      * @author Michael_xu
-     * @param
-     * @return
+     * @param  
+     * @return 
      */
     public function read()
     {
@@ -122,7 +125,7 @@ class Receivables extends ApiCommon
         if (!in_array($data['owner_user_id'],$auth_user_ids)) {
             header('Content-Type:application/json; charset=utf-8');
             exit(json_encode(['code'=>102,'error'=>'无权操作']));
-        }
+        }         
         if (!$data) {
             return resultArray(['error' => $receivablesModel->getError()]);
         }
@@ -132,11 +135,11 @@ class Receivables extends ApiCommon
     /**
      * 编辑回款
      * @author Michael_xu
-     * @param
-     * @return
+     * @param 
+     * @return 
      */
     public function update()
-    {
+    {    
         $receivablesModel = model('Receivables');
         $userModel = new \app\admin\model\User();
         $param = $this->param;
@@ -151,66 +154,67 @@ class Receivables extends ApiCommon
         }
 
         //已进行审批，不能编辑
-        if (!in_array($dataInfo['check_status'],['3','4'])) {
+        if (!in_array($dataInfo['check_status'],['3','4','5'])) {
             return resultArray(['error' => '当前状态为审批中或已审批通过，不可编辑']);
         }
-
-        //将回款审批状态至为待审核，提交后重新进行审批
-        //审核判断（是否有符合条件的审批流）
-        $examineFlowModel = new \app\admin\model\ExamineFlow();
-        $examineStepModel = new \app\admin\model\ExamineStep();
-        if (!$examineFlowModel->checkExamine($param['create_user_id'], 'crm_receivables')) {
-            return resultArray(['error' => '暂无审批人，无法创建']);
-        }
-        //添加审批相关信息
-        $examineFlowData = $examineFlowModel->getFlowByTypes($param['create_user_id'], 'crm_receivables');
-        if (!$examineFlowData) {
-            return resultArray(['error' => '无可用审批流，请联系管理员']);
-        }
-        $param['flow_id'] = $examineFlowData['flow_id'];
-        //获取审批人信息
-        if ($examineFlowData['config'] == 1) {
-            //固定审批流
-            $nextStepData = $examineStepModel->nextStepUser($dataInfo['owner_user_id'], $examineFlowData['flow_id'], 'crm_receivables', 0, 0, 0);
-            $next_user_ids = arrayToString($nextStepData['next_user_ids']) ? : '';
-            $check_user_id = $next_user_ids ? : [];
-            $param['order_id'] = 1;
-        } else {
-            $check_user_id = $param['check_user_id'] ? ','.$param['check_user_id'].',' : '';
-        }
-        if (!$check_user_id) {
-            return resultArray(['error' => '无可用审批人，请联系管理员']);
-        }
-        $param['check_user_id'] = is_array($check_user_id) ? ','.implode(',',$check_user_id).',' : $check_user_id;
-        $param['check_status'] = 0;
-
-        //流程审批人
-        // $flow_user_id = $examineFlowModel->getUserByFlow($examineFlowData['flow_id'], $dataInfo['owner_user_id']);
-        // $param['flow_user_id'] = $flow_user_id ? arrayToString($flow_user_id) : '';
-        $param['flow_user_id'] = '';
+        if ($param['is_draft']) {
+            //保存为草稿
+            $param['check_status'] = 5;
+            $param['check_user_id'] = $param['check_user_id'] ? ','.$param['check_user_id'].',' : '';
+        } else {        
+            //将回款审批状态至为待审核，提交后重新进行审批
+            //审核判断（是否有符合条件的审批流）
+            $examineFlowModel = new \app\admin\model\ExamineFlow();
+            $examineStepModel = new \app\admin\model\ExamineStep();
+            if (!$examineFlowModel->checkExamine($param['create_user_id'], 'crm_receivables')) {
+                return resultArray(['error' => '暂无审批人，无法创建']); 
+            }
+            //添加审批相关信息
+            $examineFlowData = $examineFlowModel->getFlowByTypes($param['create_user_id'], 'crm_receivables');
+            if (!$examineFlowData) {
+                return resultArray(['error' => '无可用审批流，请联系管理员']);
+            }
+            $param['flow_id'] = $examineFlowData['flow_id'];
+            //获取审批人信息
+            if ($examineFlowData['config'] == 1) {
+                //固定审批流
+                $nextStepData = $examineStepModel->nextStepUser($dataInfo['owner_user_id'], $examineFlowData['flow_id'], 'crm_receivables', 0, 0, 0);
+                $next_user_ids = arrayToString($nextStepData['next_user_ids']) ? : '';
+                $check_user_id = $next_user_ids ? : [];
+                $param['order_id'] = 1;
+            } else {
+                $check_user_id = $param['check_user_id'] ? ','.$param['check_user_id'].',' : '';
+            }
+            if (!$check_user_id) {
+                return resultArray(['error' => '无可用审批人，请联系管理员']);
+            }
+            $param['check_user_id'] = is_array($check_user_id) ? ','.implode(',',$check_user_id).',' : $check_user_id;
+            $param['check_status'] = 0;   
+            $param['flow_user_id'] = '';  
+        }                      
 
         $res = $receivablesModel->updateDataById($param, $param['id']);
         if ($res) {
             //将审批记录至为无效
             $examineRecordModel = new \app\admin\model\ExamineRecord();
-            $examineRecordModel->setEnd(['types' => 'crm_receivables','types_id' => $param['id']]);
+            $examineRecordModel->setEnd(['types' => 'crm_receivables','types_id' => $param['id']]);            
             return resultArray(['data' => '编辑成功']);
         } else {
             return resultArray(['error' => $receivablesModel->getError()]);
-        }
+        }       
     }
 
     /**
      * 删除回款
      * @author Michael_xu
-     * @param
-     * @return
+     * @param 
+     * @return 
      */
     public function delete()
     {
         $receivablesModel = model('Receivables');
         $param = $this->param;
-        $userInfo = $this->userInfo;
+        $userInfo = $this->userInfo;      
         if (!is_array($param['id'])) {
             $receivables_id = [$param['id']];
         } else {
@@ -237,33 +241,33 @@ class Receivables extends ApiCommon
                 $errorMessage[] = '名称为'.$data['number'].'的回款删除失败,错误原因：无权操作';
                 continue;
             }
-            if (!in_array($data['check_status'],['4']) && !in_array(1,$adminTypes)) {
+            if (!in_array($data['check_status'],['0','4','5']) && !in_array(1,$adminTypes)) {
                 $isDel = false;
                 $errorMessage[] = '名称为'.$data['number'].'的回款删除失败,错误原因：请先撤销审核';
                 continue;
-            }
-            $delIds[] = $v;
+            }            
+            $delIds[] = $v;            
         }
         if ($delIds) {
             $data = $receivablesModel->delDatas($delIds);
             if (!$data) {
                 return resultArray(['error' => $receivablesModel->getError()]);
-            }
-            actionLog($delIds,'','','');
+            } 
+            actionLog($delIds,'','','');         
         }
         if ($errorMessage) {
             return resultArray(['error' => $errorMessage]);
         } else {
             return resultArray(['data' => '删除成功']);
-        }
-    }
-
+        }            
+    }    
+	
     /**
      * 回款审核
      * @author Michael_xu
-     * @param
+     * @param 
      * @return
-     */
+     */  
     public function check()
     {
         $param = $this->param;
@@ -279,7 +283,7 @@ class Receivables extends ApiCommon
         $receivablesData['check_status'] = 1; //0待审核，1审核通中，2审核通过，3审核未通过
         //权限判断
         if (!$examineStepModel->checkExamine($user_id, 'crm_receivables', $param['id'])) {
-            return resultArray(['error' => $examineStepModel->getError()]);
+           return resultArray(['error' => $examineStepModel->getError()]); 
         };
         //审批主体详情
         $dataInfo = $receivablesModel->getDataById($param['id']);
@@ -296,7 +300,7 @@ class Receivables extends ApiCommon
         $checkData['flow_id'] = $dataInfo['flow_id'];
         $checkData['order_id'] = $dataInfo['order_id'] ? : 1;
         $checkData['status'] = $status;
-
+        
         if ($status == 1) {
             if ($flowInfo['config'] == 1) {
                 //固定流程
@@ -312,61 +316,61 @@ class Receivables extends ApiCommon
                 } else {
                     //修改主体相关审批信息
                     $receivablesData['check_user_id'] = arrayToString($next_user_ids);
-                }
+                }                 
             } else {
                 //自选流程
                 $is_end = $param['is_end'] ? 1 : '';
                 $check_user_id = $param['check_user_id'] ? : '';
                 if ($is_end !== 1 && empty($check_user_id)) {
-                    return resultArray(['error' => '请选择下一审批人']);
+                    return resultArray(['error' => '请选择下一审批人']); 
                 }
                 $receivablesData['check_user_id'] = arrayToString($param['check_user_id']);
-            }
+            } 
             if ($is_end == 1) {
                 $checkData['check_status'] = !empty($status) ? 2 : 3;
                 $receivablesData['check_user_id'] = '';
                 $receivablesData['check_status'] = 2;
-            }
+            }                     
         } else {
             //审批驳回
             $is_end = 1;
             $receivablesData['check_status'] = 3;
             //将审批记录至为无效
-            // $examineRecordModel->setEnd(['types' => 'crm_receivables','types_id' => $param['id']]);
+            // $examineRecordModel->setEnd(['types' => 'crm_receivables','types_id' => $param['id']]);                       
         }
         //已审批人ID
-        $receivablesData['flow_user_id'] = stringToArray($dataInfo['flow_user_id']) ? arrayToString(array_merge(stringToArray($dataInfo['flow_user_id']),[$user_id])) : arrayToString([$user_id]);
+        $receivablesData['flow_user_id'] = stringToArray($dataInfo['flow_user_id']) ? arrayToString(array_merge(stringToArray($dataInfo['flow_user_id']),[$user_id])) : arrayToString([$user_id]);        
         $resReceivables = db('crm_receivables')->where(['receivables_id' => $param['id']])->update($receivablesData);
         if ($resReceivables) {
             if ($status) {
                 //发送站内信
-                $sendContent = '您的申请【'.$dataInfo['number'].'】,'.$userInfo['realname'].'已审核通过';
+                $sendContent = '您的申请《'.$dataInfo['number'].'》,'.$userInfo['realname'].'已审核通过';
                 $resMessage = sendMessage($dataInfo['owner_user_id'], $sendContent, $param['id'], 1);
             } else {
-                $sendContent = '您的申请【'.$dataInfo['number'].'】,'.$userInfo['realname'].'已审核拒绝,审核意见：'.$param['content'];
+                $sendContent = '您的申请《'.$dataInfo['number'].'》,'.$userInfo['realname'].'已审核拒绝,审核意见：'.$param['content'];
                 $resMessage = sendMessage($dataInfo['owner_user_id'], $sendContent, $param['id'], 1);
             }
 
             //审批记录
             $resRecord = $examineRecordModel->createData($checkData);
-
+            
             if ($is_end == 1 && !empty($status)) {
                 //发送站内信
-                $sendContent = '您的申请【'.$dataInfo['number'].'】,'.$userInfo['realname'].'已审核通过,审批结束';
-                $resMessage = sendMessage($dataInfo['owner_user_id'], $sendContent, $param['id'], 1);
+                $sendContent = '您的申请《'.$dataInfo['number'].'》,'.$userInfo['realname'].'已审核通过,审批结束';
+                $resMessage = sendMessage($dataInfo['owner_user_id'], $sendContent, $param['id'], 1); 
             }
-            return resultArray(['data' => '审批成功']);
+            return resultArray(['data' => '审批成功']);            
         } else {
-            return resultArray(['error' => '审批失败，请重试！']);
+            return resultArray(['error' => '审批失败，请重试！']); 
         }
     }
 
     /**
      * 回款撤销审核
      * @author Michael_xu
-     * @param
+     * @param 
      * @return
-     */
+     */  
     public function revokeCheck()
     {
         $param = $this->param;
@@ -382,19 +386,19 @@ class Receivables extends ApiCommon
         $receivablesData['update_time'] = time();
         $receivablesData['check_status'] = 0; //0待审核，1审核通中，2审核通过，3审核未通过
         //审批主体详情
-        $dataInfo = $receivablesModel->getDataById($param['id']);
+        $dataInfo = $receivablesModel->getDataById($param['id']);        
         //权限判断(创建人或负责人或管理员)
         if ($dataInfo['check_status'] == 2) {
-            return resultArray(['error' => '已审批结束,不能撤销']);
-        }
+            return resultArray(['error' => '已审批结束,不能撤销']);   
+        } 
         if ($dataInfo['check_status'] == 4) {
-            return resultArray(['error' => '无需撤销']);
-        }
-        $admin_user_ids = $userModel->getAdminId();
+            return resultArray(['error' => '无需撤销']);   
+        } 
+        $admin_user_ids = $userModel->getAdminId(); 
         if ($dataInfo['owner_user_id'] !== $user_id && !in_array($user_id, $admin_user_ids)) {
             return resultArray(['error' => '没有权限']);
-        }
-
+        }     
+        
         $is_end = 0; // 1审批结束
         $status = 2; //1通过，0驳回, 2撤销
         $checkData = [];
@@ -406,7 +410,7 @@ class Receivables extends ApiCommon
         $checkData['flow_id'] = $dataInfo['flow_id'];
         $checkData['order_id'] = $dataInfo['order_id'];
         $checkData['status'] = $status;
-
+        
         $receivablesData['check_status'] = 4;
         $receivablesData['check_user_id'] = '';
         $receivablesData['flow_user_id'] = '';
@@ -416,9 +420,9 @@ class Receivables extends ApiCommon
             // $examineRecordModel->setEnd(['types' => 'crm_receivables','types_id' => $param['id']]);
             //审批记录
             $resRecord = $examineRecordModel->createData($checkData);
-            return resultArray(['data' => '撤销成功']);
+            return resultArray(['data' => '撤销成功']);            
         } else {
-            return resultArray(['error' => '撤销失败，请重试！']);
+            return resultArray(['error' => '撤销失败，请重试！']); 
         }
-    }
+    } 
 }

@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------
-// | Description: 商业智能-项目分析
+// | Description: 商业智能-商机分析
 // +----------------------------------------------------------------------
 // | 
 // +----------------------------------------------------------------------
@@ -31,6 +31,10 @@ class Business extends ApiCommon
         if (!in_array($a, $action['permission'])) {
             parent::_initialize();
         }
+        if (!checkPerByAction('bi', 'business' , 'read')) {
+            header('Content-Type:application/json; charset=utf-8');
+            exit(json_encode(['code'=>102,'error'=>'无权操作']));
+        }        
     } 
   
     /**
@@ -41,60 +45,32 @@ class Business extends ApiCommon
      */
     public function funnel()
     {
-        if (!checkPerByAction('bi', 'business' , 'read')) {
-            header('Content-Type:application/json; charset=utf-8');
-            exit(json_encode(['code'=>102,'error'=>'无权操作']));
-        }
         $businessModel = new \app\crm\model\Business();
         $userModel = new \app\admin\model\User();
         $param = $this->param;
-
-        //查询员工IDS
-        $map_user_ids = [];
-        if ($param['user_id']) {
-            $map_user_ids = [$param['user_id']];
-        } else {
-            if ($param['structure_id']) {
-                $map_user_ids = $userModel->getSubUserByStr($param['structure_id'], 2);
-            }
-        }
-        $perUserIds = $userModel->getUserByPer('bi', 'business', 'read'); //权限范围内userIds
-        $userIds = $map_user_ids ? array_intersect($map_user_ids, $perUserIds) : $perUserIds; //数组交集
-        $param['userIds'] = $userIds ? : [];
-		
+        $param['perUserIds'] = $userModel->getUserByPer('bi', 'business', 'read'); //权限范围内userIds
         $list = $businessModel->getFunnel($param);
         return resultArray(['data' => $list]);
     }  
 
     /**
-     * 新增项目数与金额趋势分析
-     * @return [type] [description]
+     * 新增商机数与金额趋势分析
+     * @return 
      */
     public function businessTrend()
     {
-        if (!checkPerByAction('bi', 'business' , 'read')) {
-            header('Content-Type:application/json; charset=utf-8');
-            exit(json_encode(['code'=>102,'error'=>'无权操作']));
-        }
         $businessModel = new \app\bi\model\Business();
         $userModel = new \app\admin\model\User();
         $biCustomerModel = new \app\bi\model\Customer();
+        $adminModel = new \app\admin\model\Admin(); 
         $param = $this->param;
+        $perUserIds = $userModel->getUserByPer('bi', 'business', 'read'); //权限范围内userIds
+        $whereArr = $adminModel->getWhere($param, '', $perUserIds); //统计条件
+        $userIds = $whereArr['userIds'];        
         
         if(empty($param['type']) && empty($param['start_time'])){
             $param['type'] = 'month';
-        }
-        $map_user_ids = [];
-        if ($param['user_id']) {
-            $map_user_ids = array($param['user_id']);
-        } else {
-            if ($param['structure_id']) {
-                $map_user_ids = $userModel->getSubUserByStr($param['structure_id'], 2);
-            }
-        }
-        $perUserIds = $userModel->getUserByPer('bi', 'business', 'read'); //权限范围内userIds
-        $userIds = $map_user_ids ? array_intersect($map_user_ids, $perUserIds) : $perUserIds; //数组交集
-
+        }        
         $company = $biCustomerModel->getParamByCompany($param);
         $datas = array();
         for ($i=1; $i <= $company['j']; $i++) { 
@@ -104,9 +80,9 @@ class Business extends ApiCommon
             //时间段
             $timeArr = $biCustomerModel->getStartAndEnd($param,$company['year'],$i);
             $item['type'] = $timeArr['type'];
-            $day = $timeArr['day']?$timeArr['day']:'1';
+            $day = $timeArr['day'] ? $timeArr['day'] : '1';
             $start_time = strtotime($timeArr['year'].'-'.$timeArr['month'].'-'.$day);
-            $next_day = $timeArr['next_day']?$timeArr['next_day']:'1';
+            $next_day = $timeArr['next_day'] ? $timeArr['next_day'] : '1';
             $end_time = strtotime($timeArr['next_year'].'-'.$timeArr['next_month'].'-'.$next_day);
             $create_time = [];
             if ($start_time && $end_time) {
@@ -124,15 +100,11 @@ class Business extends ApiCommon
     }
 
     /**
-     * 新增项目数与金额趋势分析 列表
-     * @return [type] [description]
+     * 新增商机数与金额趋势分析 列表
+     * @return 
      */
     public function trendList()
     {
-        if (!checkPerByAction('bi', 'business' , 'read')) {
-            header('Content-Type:application/json; charset=utf-8');
-            exit(json_encode(['code'=>102,'error'=>'无权操作']));
-        }
         $businessModel = new \app\bi\model\Business();
         $crmBusinessModel = new \app\crm\model\Business();
         $userModel = new \app\admin\model\User();
@@ -155,7 +127,7 @@ class Business extends ApiCommon
             $owner_user_id_info = isset($v['owner_user_id']) ? $userModel->getUserById($v['owner_user_id']) : [];
             $dataList[$k]['owner_user_name'] = $owner_user_id_info['realname'];  
             $dataList[$k]['status_id_info'] = db('crm_business_status')->where('status_id',$v['status_id'])->value('name');//销售阶段
-            $dataList[$k]['type_id_info'] = db('crm_business_type')->where('type_id',$v['type_id'])->value('name');//项目状态组 
+            $dataList[$k]['type_id_info'] = db('crm_business_type')->where('type_id',$v['type_id'])->value('name');//商机状态组 
         }
         return resultArray(['data' => $dataList]);
     }
@@ -168,29 +140,18 @@ class Business extends ApiCommon
      */
     public function win()
     {
-        if (!checkPerByAction('bi', 'business' , 'read')) {
-            header('Content-Type:application/json; charset=utf-8');
-            exit(json_encode(['code'=>102,'error'=>'无权操作']));
-        }
         $businessModel = new \app\bi\model\Business();
         $userModel = new \app\admin\model\User();
         $biCustomerModel = new \app\bi\model\Customer();
+        $adminModel = new \app\admin\model\Admin(); 
         $param = $this->param;
+        $perUserIds = $userModel->getUserByPer('bi', 'business', 'read'); //权限范围内userIds
+        $whereArr = $adminModel->getWhere($param, '', $perUserIds); //统计条件
+        $userIds = $whereArr['userIds'];
         
         if(empty($param['type']) && empty($param['start_time'])){
             $param['type'] = 'month';
         }
-        $map_user_ids = [];
-        if ($param['user_id']) {
-            $map_user_ids = array($param['user_id']);
-        } else {
-            if ($param['structure_id']) {
-                $map_user_ids = $userModel->getSubUserByStr($param['structure_id'], 2);
-            }
-        }
-        $perUserIds = $userModel->getUserByPer('bi', 'business', 'read'); //权限范围内userIds
-        $userIds = $map_user_ids ? array_intersect($map_user_ids, $perUserIds) : $perUserIds; //数组交集
-
         $company = $biCustomerModel->getParamByCompany($param);
         $datas = array();
         for ($i=1; $i <= $company['j']; $i++) { 

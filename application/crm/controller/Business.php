@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Description: 项目
+// | Description: 商机
 // +----------------------------------------------------------------------
-// |
+// | 
 // +----------------------------------------------------------------------
 
 namespace app\crm\controller;
@@ -19,23 +19,23 @@ class Business extends ApiCommon
      * @permission 无限制
      * @allow 登录用户可访问
      * @other 其他根据系统设置
-     **/
+    **/    
     public function _initialize()
     {
         $action = [
             'permission'=>[''],
-            'allow'=>['statuslist','advance','product']
+            'allow'=>['statuslist','advance','product']            
         ];
         Hook::listen('check_auth',$action);
         $request = Request::instance();
-        $a = strtolower($request->action());
+        $a = strtolower($request->action());        
         if (!in_array($a, $action['permission'])) {
             parent::_initialize();
         }
-    }
+    } 
 
     /**
-     * 项目列表
+     * 商机列表
      * @author Michael_xu
      * @return
      */
@@ -44,16 +44,16 @@ class Business extends ApiCommon
         $businessModel = model('Business');
         $param = $this->param;
         $userInfo = $this->userInfo;
-        $param['user_id'] = $userInfo['id'];
-        $data = $businessModel->getDataList($param);
+        $param['user_id'] = $userInfo['id']; 
+        $data = $businessModel->getDataList($param);       
         return resultArray(['data' => $data]);
     }
 
     /**
-     * 添加项目
+     * 添加商机
      * @author Michael_xu
-     * @param
-     * @return
+     * @param 
+     * @return 
      */
     public function save()
     {
@@ -71,9 +71,9 @@ class Business extends ApiCommon
     }
 
     /**
-     * 项目详情
+     * 商机详情
      * @author Michael_xu
-     * @param
+     * @param  
      * @return
      */
     public function read()
@@ -88,12 +88,12 @@ class Business extends ApiCommon
         $auth_user_ids = $userModel->getUserByPer('crm', 'business', 'read');
         //读权限
         $roPre = $userModel->rwPre($userInfo['id'], $data['ro_user_id'], $data['rw_user_id'], 'read');
-        $rwPre = $userModel->rwPre($userInfo['id'], $data['ro_user_id'], $data['rw_user_id'], 'update');
+        $rwPre = $userModel->rwPre($userInfo['id'], $data['ro_user_id'], $data['rw_user_id'], 'update');        
         if (!in_array($data['owner_user_id'],$auth_user_ids) && !$rwPre && !$roPre) {
             header('Content-Type:application/json; charset=utf-8');
             exit(json_encode(['code'=>102,'error'=>'无权操作']));
-        }
-        //项目状态组
+        }        
+        //商机状态组
         $data['status_list'] = $businessStatusModel->getDataById($data['type_id']);
         if (!$data) {
             return resultArray(['error' => $businessModel->getError()]);
@@ -102,13 +102,13 @@ class Business extends ApiCommon
     }
 
     /**
-     * 编辑项目
+     * 编辑商机
      * @author Michael_xu
-     * @param
+     * @param 
      * @return
      */
     public function update()
-    {
+    {    
         $businessModel = model('Business');
         $userModel = new \app\admin\model\User();
         $param = $this->param;
@@ -118,29 +118,29 @@ class Business extends ApiCommon
         $data = $businessModel->getDataById($param['id']);
         $auth_user_ids = $userModel->getUserByPer('crm', 'business', 'update');
         //读写权限
-        $rwPre = $userModel->rwPre($userInfo['id'], $data['ro_user_id'], $data['rw_user_id'], 'update');
+        $rwPre = $userModel->rwPre($userInfo['id'], $data['ro_user_id'], $data['rw_user_id'], 'update');        
         if (!in_array($data['owner_user_id'],$auth_user_ids) && !$rwPre) {
             header('Content-Type:application/json; charset=utf-8');
             exit(json_encode(['code'=>102,'error'=>'无权操作']));
-        }
+        }        
         if ($businessModel->updateDataById($param, $param['id'])) {
             return resultArray(['data' => '编辑成功']);
         } else {
             return resultArray(['error' => $businessModel->getError()]);
-        }
+        }       
     }
 
     /**
-     * 删除项目（逻辑删）
+     * 删除商机（逻辑删）
      * @author Michael_xu
-     * @param
+     * @param 
      * @return
      */
     public function delete()
     {
+        $param = $this->param; 
         $businessModel = model('Business');
-        $param = $this->param;
-
+        $recordModel = new \app\admin\model\Record();    
         if (!is_array($param['id'])) {
             $business_id[] = $param['id'];
         } else {
@@ -158,34 +158,36 @@ class Business extends ApiCommon
             $data = $businessModel->getDataById($v);
             if (!$data) {
                 $isDel = false;
-                $errorMessage[] = 'id为'.$v.'的项目删除失败,错误原因：'.$businessModel->getError();
+                $errorMessage[] = 'id为'.$v.'的商机删除失败,错误原因：'.$businessModel->getError();
                 continue;
             }
             if (!in_array($data['owner_user_id'],$auth_user_ids)) {
                 $isDel = false;
-                $errorMessage[] = '名称为'.$data['name'].'的项目删除失败,错误原因：无权操作';
+                $errorMessage[] = '名称为'.$data['name'].'的商机删除失败,错误原因：无权操作';
                 continue;
             }
-            $delIds[] = $v;
+            $delIds[] = $v;            
         }
         if ($delIds) {
             $data = $businessModel->delDatas($delIds);
             if (!$data) {
                 return resultArray(['error' => $businessModel->getError()]);
             }
-            actionLog($delIds,'','','');
+            //删除跟进记录
+            $recordModel->delDataByTypes('crm_business',$delIds);            
+            actionLog($delIds,'','','');         
         }
         if ($errorMessage) {
             return resultArray(['error' => $errorMessage]);
         } else {
             return resultArray(['data' => '删除成功']);
-        }
+        }        
     }
 
     /**
-     * 符合条件的项目状态组
+     * 符合条件的商机状态组
      * @author Michael_xu
-     * @param
+     * @param 
      * @return
      */
     public function statusList()
@@ -193,23 +195,23 @@ class Business extends ApiCommon
         $businessStatusModel = model('BusinessStatus');
         $userInfo = $this->userInfo;
         $list = db('crm_business_type')
-            ->where(['structure_id' => ['like','%,'.$userInfo['structure_id'].',%'],'status' => 1])
-            ->whereOr('structure_id','')
-            ->select();
+                ->where(['structure_id' => ['like','%,'.$userInfo['structure_id'].',%'],'status' => 1])
+                ->whereOr('structure_id','')
+                ->select();	
         foreach ($list as $k=>$v) {
-            $list[$k]['statusList'] = $businessStatusModel->getDataList($v['type_id']);
+            $list[$k]['statusList'] = $businessStatusModel->getDataList($v['type_id']); 
         }
         return resultArray(['data' => $list]);
-    }
-
+    }          
+    
     /**
-     * 项目转移
+     * 商机转移
      * @author Michael_xu
      * @param owner_user_id 变更负责人
      * @param is_remove 1移出，2转为团队成员
      * @param type 权限 1只读2读写
      * @return
-     */
+     */ 
     public function transfer()
     {
         $param = $this->param;
@@ -223,12 +225,12 @@ class Business extends ApiCommon
             return resultArray(['error' => '变更负责人不能为空']);
         }
         if (!$param['business_id'] || !is_array($param['business_id'])) {
-            return resultArray(['error' => '请选择需要转移的项目']);
+            return resultArray(['error' => '请选择需要转移的商机']); 
         }
-
+        
         $is_remove = $param['is_remove'] == 2 ? : 1;
         $type = $param['type'] == 2 ? : 1;
-
+        
         $data = [];
         $data['owner_user_id'] = $param['owner_user_id'];
         $data['update_time'] = time();
@@ -239,7 +241,7 @@ class Business extends ApiCommon
             $businessInfo = $businessModel->getDataById($business_id);
 
             if (!$businessInfo) {
-                $errorMessage[] = 'id:为'.$business_id.'的项目转移失败，错误原因：数据不存在；';
+                $errorMessage[] = '名称:为《'.$businessInfo['name'].'》的商机转移失败，错误原因：数据不存在；';
                 continue;
             }
             //权限判断
@@ -253,21 +255,21 @@ class Business extends ApiCommon
                 continue;
             }
             //修改记录
-            updateActionLog($userInfo['id'], 'crm_business', $business_id, '', '', '将项目转移给：'.$ownerUserName);
+            updateActionLog($userInfo['id'], 'crm_business', $business_id, '', '', '将商机转移给：'.$ownerUserName);       
         }
         if (!$errorMessage) {
             return resultArray(['data' => '转移成功']);
         } else {
             return resultArray(['error' => $errorMessage]);
         }
-    }
+    } 
 
     /**
      * 相关产品
      * @author Michael_xu
-     * @param
+     * @param 
      * @return
-     */
+     */ 
     public function product()
     {
         $productModel = model('Product');
@@ -277,7 +279,7 @@ class Business extends ApiCommon
         if (!$param['business_id']) {
             return resultArray(['error' => '参数错误']);
         }
-        $businessInfo = db('crm_business')->where(['business_id' => $param['business_id']])->find();
+        $businessInfo = db('crm_business')->where(['business_id' => $param['business_id']])->find();     
         //判断权限
         $auth_user_ids = $userModel->getUserByPer('crm', 'business', 'read');
         //读写权限
@@ -298,17 +300,17 @@ class Business extends ApiCommon
         }
         $list['list'] = $dataList ? : [];
         $list['total_price'] = $businessInfo['total_price'] ? : '0.00';
-        $list['discount_rate'] = $businessInfo['discount_rate'] ? : '0.00';
+        $list['discount_rate'] = $businessInfo['discount_rate'] ? : '0.00';        
         return resultArray(['data' => $list]);
-    }
+    }  
 
     /**
-     * 项目状态推进
+     * 商机状态推进
      * @author Michael_xu
-     * @param business_id 项目ID
-     * @param status_id 推进项目状态ID
+     * @param business_id 商机ID
+     * @param status_id 推进商机状态ID
      * @return
-     */
+     */ 
     public function advance()
     {
         $param = $this->param;
@@ -343,20 +345,20 @@ class Business extends ApiCommon
         if ($status_id) {
             $data['status_id'] = $status_id;
             $data['status_time'] = time();
-        }
+        }        
         $res = db('crm_business')->where(['business_id' => $param['business_id']])->update($data);
         if (!$res) {
             return resultArray(['error' => '推进失败，请重试']);
         } else {
-            //推进记录添加
+			//推进记录添加
             $temp['status_id'] = $status_id ? : 0;
-            $temp['is_end'] = $is_end ? : 0;
-            $temp['business_id'] = $param['business_id'];
-            $temp['create_time'] = time();
+			$temp['is_end'] = $is_end ? : 0;
+			$temp['business_id'] = $param['business_id'];
+			$temp['create_time'] = time();
             $temp['owner_user_id'] = $userInfo['id'];
-            $temp['remark'] = $param['remark'] ? : '';
-            Db::name('CrmBusinessLog')->insert($temp);
+			$temp['remark'] = $param['remark'] ? : '';
+			Db::name('CrmBusinessLog')->insert($temp);
             return resultArray(['data' => '推进成功']);
         }
-    }
+    }       
 }

@@ -102,7 +102,7 @@ function user_md5($str, $auth_key = '', $username = '')
  * 金额展示规则,超过1万时以万为单位，低于1万时以千为单位，低于1千时以元为单位
  * @author Michael_xu
  * @param  string $money      金额
- * @return string
+ * @return string           
  */
 function money_view($money)
 {
@@ -122,12 +122,13 @@ function money_view($money)
  * @author Michael_xu
  * @param  $array 条件数组
  * @param  $module 相关模块
- * @return string
+ * @return string           
  */
 function where_arr($array = [], $m = '', $c = '', $a = '')
 {
     $userModel = new UserModel();
-    $checkStatusArray = ['待审核' => '0','审核中'=>'1','审核通过'=>'2','审核失败'=>'3','已撤回'=>'4'];
+    $checkStatusList = ['待审核','审核中','审核通过','审核失败','已撤回','未提交'];
+    $checkStatusArray = ['待审核' => '0','审核中'=>'1','审核通过'=>'2','审核失败'=>'3','已撤回'=>'4','未提交'=>'5'];
     //查询自定义字段模块多选字段类型
     $check_field_arr = [];
     //特殊字段
@@ -135,7 +136,7 @@ function where_arr($array = [], $m = '', $c = '', $a = '')
     //过滤系统参数
     $unset_arr = ['page','limit','order_type','order_field'];
     if (!is_array($array)) {
-        return [];
+       return []; 
     }
     $types = $c;
     foreach ($array as $k=>$v) {
@@ -157,7 +158,9 @@ function where_arr($array = [], $m = '', $c = '', $a = '')
                 $k = 'name';
                 $c = 'contacts.';
             }
-            if ($k == 'check_status' && is_array($v) && in_array($v['value'],$checkStatusArray)) $v['value'] = $checkStatusArray[$v['value']] ? : '0';
+            if ($k == 'check_status' && is_array($v) && in_array($v['value'],$checkStatusList)) {
+                $v['value'] = $checkStatusArray[$v['value']] ? : '0';
+            }
             if (is_array($v)) {
                 if ($v['state']) {
                     $address_where[] = '%'.$v['state'].'%';
@@ -187,7 +190,7 @@ function where_arr($array = [], $m = '', $c = '', $a = '')
                         $where[$c.$k] = ['egt', $v['start_date']];
                     } else {
                         $where[$c.$k] = ['elt', $v['end_date']];
-                    }
+                    }                                     
                 } elseif (!empty($v['value']) || $v['value'] === '0') {
                     if (in_array($k, $check_field_arr)) {
                         $where[$c.$k] = field($v['value'], 'contains');
@@ -198,14 +201,14 @@ function where_arr($array = [], $m = '', $c = '', $a = '')
                     $where[$c.$k] = field($v['value'], $v['condition']);
                 } else {
                     $where[$c.$k] = $v;
-                }
+                }                  
             } elseif (!empty($v)) {
                 $where[$c.$k] = field($v);
             } else {
                 $where[$c.$k] = $v;
             }
         }
-    }
+    }    
     return $where ? : [];
 }
 
@@ -214,7 +217,7 @@ function where_arr($array = [], $m = '', $c = '', $a = '')
  * @author Michael_xu
  * @param  string $search 搜索内容
  * @param  $condition 搜索条件
- * @return array
+ * @return array           
  */
 function field($search, $condition = '')
 {
@@ -228,19 +231,19 @@ function field($search, $condition = '')
         case "is_empty" :  $where = ['eq',''];break;
         case "is_not_empty" :  $where = ['neq',''];break;
         case "eq" : $where = ['eq',$search];break;
-        case "neq" : $where = ['neq',$search];break;
+        case "neq" : $where = ['neq',$search];break;        
         case "gt" :  $where = ['gt',$search];break;
         case "egt" :  $where = ['egt',$search];break;
-        case "lt" :
-            if (strtotime($search) !== false && strtotime($search) != -1) {
-                $where = ['lt',strtotime($search)];
-            } else {
-                $where = ['lt',$search];
-            }
-            break;
+        case "lt" :  
+                if (strtotime($search) !== false && strtotime($search) != -1) {
+                    $where = ['lt',strtotime($search)];
+                } else {
+                    $where = ['lt',$search];
+                }
+                break;
         case "elt" :  $where = ['elt',$search];break;
         case "in" :  $where = ['in',$search];break;
-        default : $where = ['eq',$search]; break;
+        default : $where = ['eq',$search]; break;      
     }
     return $where;
 }
@@ -250,7 +253,7 @@ function field($search, $condition = '')
  * @author Michael_xu
  * @param  string $value 搜索内容
  * @param  $condition 搜索条件
- * @return array
+ * @return array           
  */
 function field_arr($value, $condition = '')
 {
@@ -260,15 +263,15 @@ function field_arr($value, $condition = '')
         $condition = $condition ? : 'eq';
         $where_arr = ['value' => $value,'condition' => $condition];
     }
-
-    return $where_arr;
+    
+    return $where_arr;    
 }
 
 /**
- * 记录操作日志
+ * 记录操作日志 
  * @author Michael_xu
  * @param  $id array  操作对象id数组
- * @return
+ * @return       
  */
 function actionLog($id, $join_user_ids='', $structure_ids='', $content='')
 {
@@ -278,8 +281,8 @@ function actionLog($id, $join_user_ids='', $structure_ids='', $content='')
         $idArr = $id;
     }
     $header = Request::instance()->header();
-    $authKey = $header['authkey'];
-    $cache = cache('Auth_'.$authKey);
+    $authKey = $header['authkey'];       
+    $cache = cache('Auth_'.$authKey);  
     if (!$cache) {
         return false;
     }
@@ -290,7 +293,7 @@ function actionLog($id, $join_user_ids='', $structure_ids='', $content='')
     $m = strtolower($request->module());
     $c = strtolower($request->controller());
     $a = strtolower($request->action());
-
+	
     $res_action = true;
     foreach ($idArr as $v) {
         $data = [];
@@ -308,9 +311,9 @@ function actionLog($id, $join_user_ids='', $structure_ids='', $content='')
         }
         if (!db('admin_action_log')->insert($data)) {
             $res_action = false;
-        }
+        }      
     }
-
+    
     if ($res_action) {
         return true;
     } else {
@@ -320,15 +323,15 @@ function actionLog($id, $join_user_ids='', $structure_ids='', $content='')
 
 /**
  * 判断操作权限
- * @author Michael_xu
- * @param
- * @return
- */
+ * @author Michael_xu 
+ * @param  
+ * @return       
+ */    
 function checkPerByAction($m, $c, $a)
 {
-    /*获取头部信息*/
+    /*获取头部信息*/ 
     $header = Request::instance()->header();
-    $authKey = $header['authkey'];
+    $authKey = $header['authkey'];       
     $cache = cache('Auth_'.$authKey);
     if (!$cache) {
         return false;
@@ -363,16 +366,16 @@ function memuLevelClear($data, $root=1, $child='children', $level='level')
 {
     if (is_array($data)) {
         foreach($data as $key => $val){
-            // $data[$key]['selected'] = false;
-            $data[$key]['level'] = $root;
-            if (!empty($val[$child]) && is_array($val[$child])) {
-                $data[$key][$child] = memuLevelClear($val[$child],$root+1);
-            }else if ($root<3&&$data[$key]['menu_type']==1) {
-                unset($data[$key]);
-            }
-            if (empty($data[$key][$child])&&($data[$key]['level']==1)&&($data[$key]['menu_type']==1)) {
-                unset($data[$key]);
-            }
+        	// $data[$key]['selected'] = false;
+        	$data[$key]['level'] = $root;
+        	if (!empty($val[$child]) && is_array($val[$child])) {
+				$data[$key][$child] = memuLevelClear($val[$child],$root+1);
+        	}else if ($root<3&&$data[$key]['menu_type']==1) {
+        		unset($data[$key]);
+        	}
+        	if (empty($data[$key][$child])&&($data[$key]['level']==1)&&($data[$key]['menu_type']==1)) {
+        		unset($data[$key]);
+        	}
         }
         return array_values($data);
     }
@@ -382,12 +385,12 @@ function memuLevelClear($data, $root=1, $child='children', $level='level')
 /**
  * [rulesDeal 给树状规则表处理成 module-controller-action ]
  * @AuthorHTL
- * @DateTime
+ * @DateTime 
  * @param     [array]                   $data [树状规则数组]
  * @return    [array]                         [返回数组]
  */
 function rulesDeal($data)
-{
+{   
     if (is_array($data)) {
         $ret = [];
         foreach ($data as $k1 => $v1) {
@@ -419,35 +422,38 @@ function rulesDeal($data)
  * @param $self == true  包含自己
  * @param $type == 0  下属userid
  * @param $type == 1  全部userid
+ * @param $user_id 需要查询的user_id
  */
-function getSubUserId($self = true, $type = 0)
-{
+function getSubUserId($self = true, $type = 0, $user_id = '')
+{   
     $request = Request::instance();
-    $header = $request->header();
+    $header = $request->header();    
     $authKey = $header['authkey'];
     $cache = cache('Auth_'.$authKey);
-    if (!$cache) {
-        return false;
-    }
-    $userInfo = $cache['userInfo'];
-
-    $adminTypes = adminGroupTypes($userInfo['id']);
-    if (in_array(1,$adminTypes)) {
-        $type = 1;
-    }
+    if (!$user_id) {
+        if (!$cache) {
+            return false;
+        }
+        $userInfo = $cache['userInfo'];
+        $user_id = $userInfo['id'];
+        $adminTypes = adminGroupTypes($user_id);  
+        if (in_array(1,$adminTypes)) {
+            $type = 1;
+        }        
+    }  
 
     $belowIds = [];
     if (empty($type)) {
-        if ($userInfo['id']) {
-            $belowIds = getSubUser($userInfo['id']);
+        if ($user_id) {
+            $belowIds = getSubUser($user_id);
         }
     } else {
         $belowIds = getSubUser(0);
-    }
+    }   
     if ($self == true) {
-        $belowIds[] = $userInfo['id'];
+        $belowIds[] = $user_id;
     } else {
-        $belowIds = $belowIds ? array_diff($belowIds,array($userInfo['id'])) : [];
+        $belowIds = $belowIds ? array_diff($belowIds,array($user_id)) : [];
     }
     return array_unique($belowIds);
 }
@@ -473,7 +479,7 @@ function getSubUser($userId)
 
 /**
  * 阿里大于短信发送
- * @param unknown $appkey
+ * @param unknown $appkey 
  * @param unknown $secret
  * @param unknown $signName 短信签名
  * @param unknown $smsParam
@@ -527,7 +533,7 @@ function emailSend($email_host, $email_id, $email_pass, $email_addr, $toemail, $
  * @param  $action_id 操作id
  * @param  $sysMessage 1为系统消息
  * @param  $content 消息内容
- * @return
+ * @return 
  */
 function sendMessage($user_id, $content, $action_id, $sysMessage = 0)
 {
@@ -549,12 +555,12 @@ function sendMessage($user_id, $content, $action_id, $sysMessage = 0)
     if ($sysMessage == 0) {
         $header = $request->header();
         $authkey = $header['authkey'];
-        $cache = cache('Auth_'.$authkey);
+        $cache = cache('Auth_'.$authkey); 
         if (!$cache) {
             return false;
         }
         $userInfo = $cache['userInfo'];
-    }
+    }    
     foreach ($user_ids as $v) {
         $data = [];
         $data['content'] = $content;
@@ -564,10 +570,10 @@ function sendMessage($user_id, $content, $action_id, $sysMessage = 0)
         $data['send_time'] = time();
         $data['module_name'] = $m;
         $data['controller_name'] = $c;
-        $data['action_name'] = $a;
-        $data['action_id'] = $action_id;
-        db('admin_message')->insert($data);
-    }
+        $data['action_name'] = $a;        
+        $data['action_id'] = $action_id;        
+        db('admin_message')->insert($data); 
+    }  
     return true;
 }
 
@@ -586,12 +592,12 @@ function format_bytes($size, $delimiter = '') {
 
 /**
  * 数据修改日志
- * @param $types 类型
+ * @param $types 类型 
  * @param $action_id 操作ID
  * @param $newData 新数据
  * @param $newData 新数据
  * @author Michael_xu
- * @return
+ * @return 
  */
 function updateActionLog($user_id, $types, $action_id, $oldData = [], $newData = [], $content = '')
 {
@@ -613,17 +619,17 @@ function updateActionLog($user_id, $types, $action_id, $oldData = [], $newData =
                 $field_name = '';
                 $field_name = $newFieldArr[$k]['name'];
                 $new_value = $v;
-                $old_value = $oldData[$k] ? : '空';
+                $old_value = $oldData[$k] ? : '空';       
                 if ($newFieldArr[$k]['form_type'] == 'datetime') {
                     $new_value = $v ? date('Y-m-d', $v) : '';
                     $old_value = date('Y-m-d', $oldData[$k]);
-                    if (empty($v) && empty($oldData[$k])) continue;
+                    if (empty($v) && empty($oldData[$k])) continue;                
                 } elseif ($newFieldArr[$k]['form_type'] == 'user') {
                     $new_value = $v ? implode(',',$userModel->getUserNameByArr(stringToArray($v))) : '';
                     $old_value = $v ? implode(',',$userModel->getUserNameByArr(stringToArray($oldData[$k]))) : '';
                 } elseif ( $newFieldArr[$k]['form_type'] == 'structure') {
                     $new_value = $v ? implode(',',$structureModel->getStructureNameByArr(stringToArray($v))) : '';
-                    $old_value = $v ? implode(',',$structureModel->getStructureNameByArr(stringToArray($oldData[$k]))) : '';
+                    $old_value = $v ? implode(',',$structureModel->getStructureNameByArr(stringToArray($oldData[$k]))) : ''; 
                 } elseif ($newFieldArr[$k]['form_type'] == 'business_status') {
                     $new_value = $v ? db('crm_business_status')->where(['status_id' => $v])->value('name') : '';
                     $old_value = $v ? db('crm_business_status')->where(['status_id' => $oldData[$k]])->value('name') : '';
@@ -639,7 +645,11 @@ function updateActionLog($user_id, $types, $action_id, $oldData = [], $newData =
                 } elseif ($newFieldArr[$k]['form_type'] == 'business') {
                     $new_value = $v ? db('crm_business')->where(['business_id' => $v])->value('name') : '';
                     $old_value = $v ? db('crm_business')->where(['business_id' => $oldData[$k]])->value('name') : '';
-                }
+                } elseif ($newFieldArr[$k]['field'] == 'check_status') {
+                    $statusArr = ['0'=>'待审核','1'=>'审核中','2'=>'审核通过','3'=>'已拒绝','4'=>'已撤回','5'=>'未提交'];
+                    $new_value = $statusArr[$v];
+                    $old_value = $statusArr[$oldData[$k]];
+                }               
                 $message[] = '将 '."'".$field_name."'".' 由 '.$old_value.' 修改为 '.$new_value;
             }
         }
@@ -659,7 +669,7 @@ function updateActionLog($user_id, $types, $action_id, $oldData = [], $newData =
         $data['types'] = $types;
         $data['action_id'] = $action_id;
         $data['content'] = $content;
-        db('admin_action_record')->insert($data);
+        db('admin_action_record')->insert($data);        
     }
 }
 
@@ -668,7 +678,7 @@ function updateActionLog($user_id, $types, $action_id, $oldData = [], $newData =
  * @param $start 开始截取位置
  * @param $length 截取长度
  * @author Michael_xu
- * @return
+ * @return 
  */
 function msubstr($str, $start = 0, $length, $charset="utf-8", $suffix=true) {
     if (function_exists("mb_substr")) {
@@ -699,9 +709,9 @@ function utf8_strlen($string = null) {
  * 合法性验证
  * @param client_sign 签名参数值，使用相同规则对提交参数进行加密验证
  * @author Michael_xu
- * @return
+ * @return 
  */
-function checkVerify($saftCode = '5kcrm@'){
+function checkVerify($saftCode = 'crm@'){
     $parmList = Request::instance()->post();
     $header = $request->header();
     $parmList['sessionId'] = $header['sessionId'];
@@ -744,16 +754,16 @@ function checkVerify($saftCode = '5kcrm@'){
 
 /**
  * 数组转换字符串（以逗号隔开）
- * @param
+ * @param 
  * @author Michael_xu
- * @return
+ * @return 
  */
 function arrayToString($array)
 {
     if (!is_array($array)) {
         $data_arr[] = $array;
     } else {
-        $data_arr = $array;
+    	$data_arr = $array;
     }
     $data_arr = array_filter($data_arr); //数组去空
     $data_arr = array_unique($data_arr); //数组去重
@@ -764,9 +774,9 @@ function arrayToString($array)
 
 /**
  * 字符串转换数组（以逗号隔开）
- * @param
+ * @param 
  * @author Michael_xu
- * @return
+ * @return 
  */
 function stringToArray($string)
 {
@@ -802,7 +812,7 @@ function sort_select($select=array(), $field, $order=1)
     if ($order == 1) {
         for ($i=0; $i < $count; $i++) {
             $k = $i;
-            for ($j=$i; $j < $count; $j++) {
+            for ($j=$i; $j < $count; $j++) { 
                 if ($select[$k][$field] < $select[$j][$field]) {
                     $k = $j;
                 }
@@ -815,7 +825,7 @@ function sort_select($select=array(), $field, $order=1)
     } else {
         for ($i=0; $i < $count; $i++) {
             $k = $i;
-            for ($j=$i; $j < $count; $j++) {
+            for ($j=$i; $j < $count; $j++) { 
                 if ($select[$k][$field] > $select[$j][$field]) {
                     $k = $j;
                 }
@@ -830,13 +840,13 @@ function sort_select($select=array(), $field, $order=1)
 
 /**
  * 将秒数转换为时间 (年、天、小时、分、秒）
- * @param
+ * @param 
  */
 function getTimeBySec($time){
     if (is_numeric($time)) {
         $value = array(
-            "years" => 0, "days" => 0, "hours" => 0,
-            "minutes" => 0, "seconds" => 0,
+          "years" => 0, "days" => 0, "hours" => 0,
+          "minutes" => 0, "seconds" => 0,
         );
         if ($time >= 31556926) {
             $value["years"] = floor($time/31556926);
@@ -874,48 +884,48 @@ function getmonthByYM($param)
 {
     $month = $param['month'] ? $param['month'] : date('m',time());
     $year = $param['year'] ? $param['year'] : date('Y',time());
-    if (in_array($month, array('1', '3', '5', '7', '8', '01', '03', '05', '07', '08', '10', '12'))) {
-        $days = '31';
-    } elseif ($month == 2) {
+    if (in_array($month, array('1', '3', '5', '7', '8', '01', '03', '05', '07', '08', '10', '12'))) {  
+        $days = '31';  
+    } elseif ($month == 2) { 
         if ($year % 400 == 0 || ($year % 4 == 0 && $year % 100 !== 0)) {
-            //判断是否是闰年
-            $days = '29';
-        } else {
-            $days = '28';
-        }
-    } else {
-        $days = '30';
+            //判断是否是闰年  
+            $days = '29';  
+        } else {  
+            $days = '28';  
+        } 
+    } else {  
+        $days = '30';  
     }
     return $days;
 }
 /**
  * 根据时间戳计算当月天数
- * @param
+ * @param 
  */
 function getmonthdays($time){
     $month = date('m',$time);
     $year = date('Y',$time);
-    if (in_array($month, array('1', '3', '5', '7', '8', '01', '03', '05', '07', '08', '10', '12'))) {
-        $days = '31';
-    } elseif ($month == 2) {
+    if (in_array($month, array('1', '3', '5', '7', '8', '01', '03', '05', '07', '08', '10', '12'))) {  
+        $days = '31';  
+    } elseif ($month == 2) { 
         if ($year % 400 == 0 || ($year % 4 == 0 && $year % 100 !== 0)) {
-            //判断是否是闰年
-            $days = '29';
-        } else {
-            $days = '28';
-        }
-    } else {
-        $days = '30';
+            //判断是否是闰年  
+            $days = '29';  
+        } else {  
+            $days = '28';  
+        } 
+    } else {  
+        $days = '30';  
     }
     return $days;
 }
 
-/**
+/** 
  * 生成从开始时间到结束时间的日期数组
  * @param type，默认时间戳格式
  * @param type = 1 时，date格式
  * @param type = 2 时，获取每日开始、结束时间
- */
+ */ 
 function dateList($start, $end, $type = 0){
     if (!is_numeric($start) || !is_numeric($end) || ($end<=$start)) return '';
     $i = 0;
@@ -945,7 +955,7 @@ function dateList($start, $end, $type = 0){
     }
 }
 
-/**
+/** 
  * 获取指定日期开始时间与结束时间
  */
 function getDateRange($timestamp){
@@ -955,27 +965,27 @@ function getDateRange($timestamp){
     return $ret;
 }
 
-/**
- * 生成从开始月份到结束月份的月份数组
- * @param int $start 开始时间戳
- * @param int $end 结束时间戳
- */
+/** 
+* 生成从开始月份到结束月份的月份数组
+* @param int $start 开始时间戳
+* @param int $end 结束时间戳
+*/ 
 function monthList($start,$end){
-    if (!is_numeric($start) || !is_numeric($end) || ($end <= $start)) return '';
-    $start = date('Y-m',$start);
-    $end = date('Y-m',$end);
-    //转为时间戳
-    $start = strtotime($start.'-01');
-    $end = strtotime($end.'-01');
-    $i = 0;
-    $d = array();
-    while ($start <= $end) {
-        //这里累加每个月的的总秒数 计算公式：上一月1号的时间戳秒数减去当前月的时间戳秒数
-        $d[$i] = $start;
-        $start += strtotime('+1 month',$start)-$start;
-        $i++;
-    }
-    return $d;
+	if (!is_numeric($start) || !is_numeric($end) || ($end <= $start)) return '';
+	$start = date('Y-m',$start);
+	$end = date('Y-m',$end);
+	//转为时间戳
+	$start = strtotime($start.'-01');
+	$end = strtotime($end.'-01');
+	$i = 0;
+	$d = array();
+	while ($start <= $end) {
+		//这里累加每个月的的总秒数 计算公式：上一月1号的时间戳秒数减去当前月的时间戳秒数
+		$d[$i] = $start;
+		$start += strtotime('+1 month',$start)-$start;
+		$i++;
+	} 
+	return $d;
 }
 
 /**
@@ -983,34 +993,34 @@ function monthList($start,$end){
  * @param
  */
 function cny($ns){
-    static $cnums = array("零","壹","贰","叁","肆","伍","陆","柒","捌","玖"),
-    $cnyunits = array("圆","角","分"),
-    $grees = array("拾","佰","仟","万","拾","佰","仟","亿");
-    list($ns1,$ns2) = explode(".",$ns,2);
-    $ns2 = array_filter(array($ns2[1],$ns2[0]));
-    $ret = array_merge($ns2,array(implode("", _cny_map_unit(str_split($ns1), $grees)), ""));
-    $ret = implode("",array_reverse(_cny_map_unit($ret,$cnyunits)));
-    return str_replace(array_keys($cnums), $cnums,$ret);
+    static $cnums = array("零","壹","贰","叁","肆","伍","陆","柒","捌","玖"), 
+    $cnyunits = array("圆","角","分"), 
+    $grees = array("拾","佰","仟","万","拾","佰","仟","亿"); 
+    list($ns1,$ns2) = explode(".",$ns,2); 
+    $ns2 = array_filter(array($ns2[1],$ns2[0])); 
+    $ret = array_merge($ns2,array(implode("", _cny_map_unit(str_split($ns1), $grees)), "")); 
+    $ret = implode("",array_reverse(_cny_map_unit($ret,$cnyunits))); 
+    return str_replace(array_keys($cnums), $cnums,$ret); 
 }
 
 function _cny_map_unit($list,$units) {
-    $ul = count($units);
-    $xs = array();
-    foreach (array_reverse($list) as $x) {
-        $l = count($xs);
+    $ul = count($units); 
+    $xs = array(); 
+    foreach (array_reverse($list) as $x) { 
+        $l = count($xs); 
         if ($x!="0" || !($l%4)) {
-            $n = ($x=='0'?'':$x).($units[($l-1)%$ul]);
+            $n = ($x=='0'?'':$x).($units[($l-1)%$ul]); 
         } else {
-            $n = is_numeric($xs[0][0]) ? $x : '';
+            $n = is_numeric($xs[0][0]) ? $x : ''; 
         }
-        array_unshift($xs, $n);
-    }
-    return $xs;
+        array_unshift($xs, $n); 
+    } 
+    return $xs; 
 }
 
 /**
  * 根据类型获取开始结束时间戳数组
- * @param
+ * @param 
  */
 function getTimeByType($type = 'today')
 {
@@ -1038,7 +1048,7 @@ function getTimeByType($type = 'today')
             }
             $timeArr = array($daterange_start_time,$daterange_end_time);
             break;
-        case 'lastQuarter' :
+        case 'lastQuarter' : 
             //上季度
             $month = date('m');
             if ($month == 1 || $month == 2 ||$month == 3) {
@@ -1054,9 +1064,9 @@ function getTimeByType($type = 'today')
             } else {
                 $daterange_start_time = strtotime(date('Y-07-01 00:00:00'));
                 $daterange_end_time = strtotime(date("Y-09-30 23:59:59"));
-            }
-            $timeArr = array($daterange_start_time,$daterange_end_time);
-            break;
+            }            
+            $timeArr = array($daterange_start_time,$daterange_end_time);           
+            break;        
         case 'year' : $timeArr = Time::year(); break;
         case 'lastYear' : $timeArr = Time::lastYear(); break;
         default : $timeArr = Time::today(); break;
@@ -1087,7 +1097,7 @@ function getExtension($filename){
  * 生成编号
  * @param prefix 前缀
  * @author Michael_xu
- * @return
+ * @return 
  */
 function prefixNumber($prefix, $number_id = 0, $str = 5)
 {
@@ -1095,9 +1105,9 @@ function prefixNumber($prefix, $number_id = 0, $str = 5)
 }
 
 /**
- * curl 模拟GET请求
- * @author lee
- ***/
+* curl 模拟GET请求
+* @author lee
+***/
 function curl_get($url){
     //初始化
     $ch = curl_init();
@@ -1106,18 +1116,18 @@ function curl_get($url){
     //设置获取的信息以文件流的形式返回，而不是直接输出。
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE); // https请求 不验证hosts
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE); // https请求 不验证hosts 
     //执行命令
     $output = curl_exec($ch);
     curl_close($ch); //释放curl句柄
-    return $output;
+    return $output; 
 }
 
 /**
  * 地址坐标转换
  * @param prefix 前缀
  * @author Michael_xu
- * @return
+ * @return 
  */
 function get_lng_lat($address){
     $map_ak = config('map_ak');
@@ -1140,11 +1150,11 @@ function get_lng_lat($address){
  *@param $title   excel的第一行标题,一个数组,如果为空则没有标题
  *@param $filename 下载的文件名
  *@param exportexcel($arr,array('id','账户','密码','昵称'),'文件名!');
- */
+*/
 function exportexcel($data=array(),$title=array(),$filename='report'){
     header("Content-type:application/octet-stream");
     header("Accept-Ranges:bytes");
-    header("Content-type:application/vnd.ms-excel");
+    header("Content-type:application/vnd.ms-excel");  
     header("Content-Disposition:attachment;filename=".$filename.".xls");
     header("Pragma: no-cache");
     header("Expires: 0");
@@ -1169,35 +1179,35 @@ function exportexcel($data=array(),$title=array(),$filename='report'){
 
 //根据数据库查询出来数组获取某个字段拼接字符串
 function getFieldArray($array = array(),$field=''){
-    if(is_array($array) && $field){
-        $ary = array();
-        foreach($array as $value){
-            $ary[] = $value[$field];
-        }
-        $str = implode(',',$ary);
-        return $str;
-    } else {
-        return false;
-    }
+	if(is_array($array) && $field){
+		$ary = array();
+		foreach($array as $value){
+			$ary[] = $value[$field];
+		}
+	    $str = implode(',',$ary);
+		return $str;
+	} else {
+		return false;
+	}
 }
 
 /**
- * 检查该字段若必填，加上"*"
- * @param is_null     是否为空 0否  1是
- * @param name 字段名称
- **/
+* 检查该字段若必填，加上"*"
+* @param is_null     是否为空 0否  1是
+* @param name 字段名称
+**/
 function sign_required($is_null, $name){
-    if ($is_null == 1) {
-        return '*'.$name;
-    } else {
-        return $name;
-    }
+	if ($is_null == 1) {
+		return '*'.$name;
+	} else {
+		return $name;
+	}
 }
 
 /**
  * [获取是否有管理员角色 adminGroupTypes]
  * @param  user_id  当前人ID
- * @return
+ * @return  
  */
 function adminGroupTypes($user_id)
 {
@@ -1207,11 +1217,11 @@ function adminGroupTypes($user_id)
     if ($groupsArr) {
         foreach ($groupsArr as $key=>$val) {
             $groupids[] = $val['id'];
-        }
+        }        
     }
     $types = db('admin_group')->where(['id' => ['in',$groupids]])->group('types')->column('types');
     if ($user_id == 1) {
-        $types[] = 1;
+       $types[] = 1; 
     }
     return $types ? : [];
 }
@@ -1219,7 +1229,7 @@ function adminGroupTypes($user_id)
 /**
  * [权限数组]
  * @param ruleIds 当前人权限id
- * @return
+ * @return  
  */
 function rulesListToArray($rulesList, $ruleIds = [])
 {
@@ -1251,7 +1261,7 @@ function rulesListToArray($rulesList, $ruleIds = [])
  * @param  types 关联对象
  * @param  types_id 联对象ID
  * @param  order_id 审批排序ID
- * @return
+ * @return  
  */
 function nextCheckData($user_id, $flow_id, $types, $types_id, $order_id, $check_user_id)
 {
@@ -1260,10 +1270,10 @@ function nextCheckData($user_id, $flow_id, $types, $types_id, $order_id, $check_
     $examineStepModel = new \app\admin\model\ExamineStep();
 
     $stepInfo = $examineStepModel->getStepByOrder($flow_id, $new_order_id); //审批步骤
-    $next_user_ids = [];
+    $next_user_ids = [];      
     $is_end = 0; //审批结束
     //固定流程（status 1负责人主管，2指定用户（任意一人），3指定用户（多人会签），4上一级审批人主管）
-
+    
     //当前步骤审批人user_id
     $step_user_ids = $examineStepModel->getUserByStep($stepInfo['step_id'], $user_id);
     if ($step_user_ids) {
@@ -1278,14 +1288,14 @@ function nextCheckData($user_id, $flow_id, $types, $types_id, $order_id, $check_
                 $user_ids[] = $check_user_id;
                 $check_user_ids = $check_user_ids ? array_merge($check_user_ids, $user_ids) : $user_ids;
                 //剩余审批人user_id
-                $sub_user_ids = $check_user_ids ? array_diff(explode(',',$step_user_ids), $check_user_ids) : $step_user_ids;
-                $sub_user_ids = array_unique(array_filter($sub_user_ids));
+                $sub_user_ids = $check_user_ids ? array_diff(explode(',',$step_user_ids), $check_user_ids) : $step_user_ids; 
+                $sub_user_ids = array_unique(array_filter($sub_user_ids));          
                 if (!$sub_user_ids) {
                     $is_end = 1;
-                }
+                }            
             } else {
                 $is_end = 1;
-            }
+            }      
         }
     } else {
         $is_end = 1;
@@ -1312,7 +1322,7 @@ function nextCheckData($user_id, $flow_id, $types, $types_id, $order_id, $check_
     $data = [];
     $data['order_id'] = ($next_order_id <= $max_order_id) ? $next_order_id : $max_order_id;
     $data['next_user_ids'] = $next_user_ids ? : '';
-    return $data;
+    return $data;      
 }
 
 /**
@@ -1336,7 +1346,7 @@ function get_upload_max_filesize_byte($dec=2){
  * @param string $url
  * @param string $param
  */
-function curl_post($url = '', $post = array())
+function curl_post($url = '', $post = array()) 
 {
     $curl = curl_init(); // 启动一个CURL会话
     curl_setopt($curl, CURLOPT_URL, $url); // 要访问的地址
@@ -1354,4 +1364,6 @@ function curl_post($url = '', $post = array())
     if (curl_errno($curl)) {
         echo 'Errno'.curl_error($curl);//捕抓异常
     }
+    curl_close($curl); // 关闭CURL会话
+    return $res; // 返回数据，json格式
 }

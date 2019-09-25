@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------
-// | Description: 项目组设置
+// | Description: 商机组设置
 // +----------------------------------------------------------------------
 // | 
 // +----------------------------------------------------------------------
@@ -35,15 +35,14 @@ class BusinessStatus extends ApiCommon
         $userInfo = $this->userInfo;
         //权限判断
         $unAction = ['type'];
-        $adminTypes = adminGroupTypes($userInfo['id']);
-        if (!in_array(6,$adminTypes) && !in_array(1,$adminTypes) && !in_array(2,$adminTypes) && !in_array($a, $unAction)) {
+        if (!in_array($a, $unAction) && !checkPerByAction('admin', 'crm', 'setting')) {
             header('Content-Type:application/json; charset=utf-8');
             exit(json_encode(['code'=>102,'error'=>'无权操作']));
-        }        
+        }                
     } 
 
     /**
-     * 项目组列表
+     * 商机组列表
      * @author Michael_xu
      * @return 
      */
@@ -56,7 +55,7 @@ class BusinessStatus extends ApiCommon
     }
 
     /**
-     * 添加项目组
+     * 添加商机组
      * @author Michael_xu
      * @param 
      * @return 
@@ -77,7 +76,7 @@ class BusinessStatus extends ApiCommon
     }
 
     /**
-     * 项目组详情
+     * 商机组详情
      * @author Michael_xu
      * @param  
      * @return 
@@ -94,7 +93,7 @@ class BusinessStatus extends ApiCommon
     }
 
     /**
-     * 编辑项目组
+     * 编辑商机组
      * @author Michael_xu
      * @param 
      * @return 
@@ -114,7 +113,7 @@ class BusinessStatus extends ApiCommon
     }
 
     /**
-     * 项目组（停用）
+     * 商机组（停用）
      * @author Michael_xu
      * @param status 1启用, 0停用
      * @return 
@@ -135,7 +134,7 @@ class BusinessStatus extends ApiCommon
     }
 
     /**
-     * 删除项目组
+     * 删除商机组
      * @author Michael_xu
      * @param status 1启用, 0停用
      * @return 
