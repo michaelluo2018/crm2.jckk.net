@@ -10,12 +10,12 @@ return [
     '__rest__'=>[
         // 'admin/structures'	   =>'admin/structures',
     ],
-    'admin/install/index' => ['admin/install/index', ['method' => 'GET']],
-    'admin/install/step1' => ['admin/install/step1', ['method' => 'GET']],
-    'admin/install/step2' => ['admin/install/step2', ['method' => 'GET']],
-    'admin/install/step3' => ['admin/install/step3', ['method' => 'GET']],
-    'admin/install/step4' => ['admin/install/step4', ['method' => 'POST|AJAX']],
-    'admin/install/progress' => ['admin/install/progress', ['method' => 'POST']],
+//    'admin/install/index' => ['admin/install/index', ['method' => 'GET']],
+//    'admin/install/step1' => ['admin/install/step1', ['method' => 'GET']],
+//    'admin/install/step2' => ['admin/install/step2', ['method' => 'GET']],
+//    'admin/install/step3' => ['admin/install/step3', ['method' => 'GET']],
+//    'admin/install/step4' => ['admin/install/step4', ['method' => 'POST|AJAX']],
+//    'admin/install/progress' => ['admin/install/progress', ['method' => 'POST']],
 
     //子部门列表
     'admin/structures/subIndex' => ['admin/structures/subIndex', ['method' => 'POST']],
