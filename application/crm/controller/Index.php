@@ -561,7 +561,6 @@ class Index extends ApiCommon
         $userIds = $param['create_user_id'];
         //权限控制
         $auth_record_user_ids = $userModel->getUserByPer('crm', 'record', 'index');
-        echo 1;die();
         $auth_record_user_ids = $auth_record_user_ids ? array_intersect(explode(',',$userIds), $auth_record_user_ids) : []; //取交集   
         $where['record.create_user_id'] = array('in',$auth_record_user_ids);        
         $where['record.create_time'] = ['between',explode(',',$create_time)];
@@ -579,6 +578,7 @@ class Index extends ApiCommon
                    ->alias('record')
                    ->where($where)
                    ->count();
+        halt($list);
         foreach ($list as $k=>$v) {
             $create_user_info = isset($v['create_user_id']) ? $userModel->getUserById($v['create_user_id']) : [];
             $list[$k]['create_user_info'] = $create_user_info;
