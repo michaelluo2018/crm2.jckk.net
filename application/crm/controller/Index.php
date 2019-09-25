@@ -565,7 +565,7 @@ class Index extends ApiCommon
         $where['record.create_user_id'] = array('in',$auth_record_user_ids);        
         $where['record.create_time'] = ['between',explode(',',$create_time)];
         $where['record.types'] = $types;
-        halt($types);
+        halt($param);
         $mo = substr($types, 4);
         $list = db('admin_record')
                 ->alias('record')
