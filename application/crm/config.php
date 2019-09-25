@@ -8,6 +8,8 @@ return [
     'DEFAULT_LANG'         =>     'zh-cn', // 默认语言        
     'LANG_LIST'            =>    'en-us,zh-cn,zh-tw', //必须写可允许的语言列表
     'VAR_LANGUAGE'     => 'l', // 默认语言切换变量
+    // 应用调试模式
+    'app_debug'              => true,
 ];
 
 
