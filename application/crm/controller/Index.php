@@ -558,7 +558,8 @@ class Index extends ApiCommon
         $param = $this->param;
         $types = $param['types'];
         $create_time = $param['create_time'];
-        $userIds = $param['create_user_id']; 
+        $userIds = $param['create_user_id'];
+        echo 1;die();
         //权限控制
         $auth_record_user_ids = $userModel->getUserByPer('crm', 'record', 'index');
         $auth_record_user_ids = $auth_record_user_ids ? array_intersect(explode(',',$userIds), $auth_record_user_ids) : []; //取交集   
