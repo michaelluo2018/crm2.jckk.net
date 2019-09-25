@@ -608,6 +608,7 @@ class Index extends ApiCommon
             $dataInfo['contractList'] = $relation_list['contract_list'] ? : [];
             $list[$k]['dataInfo'] = $dataInfo ? : [];
         }
+        echo 1;die();
         $data = [];
         $data['list'] = $list ? : [];
         $data['dataCount'] = $dataCount ? : 0;
