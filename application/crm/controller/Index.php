@@ -10,7 +10,6 @@ namespace app\crm\controller;
 use app\admin\controller\ApiCommon;
 use think\Hook;
 use think\Request;
-use think\Db;
 
 class Index extends ApiCommon
 {
@@ -566,8 +565,8 @@ class Index extends ApiCommon
         $where['record.create_user_id'] = array('in',$auth_record_user_ids);        
         $where['record.create_time'] = ['between',explode(',',$create_time)];
         $where['record.types'] = $types;
-        $mo = substr($types, 4);
-        $list = Db::name('admin_record')
+        $mo = substr('crm_'.$types, 4);
+        $list = db('crm_admin_record')
                 ->alias('record')
                 ->join($types,$types.'.'.$mo.'_id = record.types_id','LEFT')
                 ->page($param['page'], $param['limit'])
@@ -575,14 +574,14 @@ class Index extends ApiCommon
                 ->order('create_time desc')
                 ->field('record.*,'.$types.'.name as types_name')
                 ->select();
-        echo Db::name('admin_record')
+        echo db('crm_admin_record')
             ->alias('record')
             ->join($types,$types.'.'.$mo.'_id = record.types_id','LEFT')
             ->page($param['page'], $param['limit'])
             ->where($where)
             ->order('create_time desc')
             ->field('record.*,'.$types.'.name as types_name')->getLastSql();
-        $dataCount = Db::name('admin_record')
+        $dataCount = db('crm_admin_record')
                    ->alias('record')
                    ->where($where)
                    ->count();
