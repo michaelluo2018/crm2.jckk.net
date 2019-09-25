@@ -574,7 +574,7 @@ class Index extends ApiCommon
                 ->order('create_time desc')
                 ->field('record.*,'.$types.'.name as types_name')
                 ->select();
-        db('admin_record')
+        echo db('admin_record')
             ->alias('record')
             ->join($types,$types.'.'.$mo.'_id = record.types_id','LEFT')
             ->page($param['page'], $param['limit'])
