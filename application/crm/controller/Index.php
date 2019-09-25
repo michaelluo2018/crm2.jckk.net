@@ -566,7 +566,6 @@ class Index extends ApiCommon
         $where['record.create_time'] = ['between',explode(',',$create_time)];
         $where['record.types'] = $types;
         $mo = substr($types, 4);
-        halt($types);
         $list = db('admin_record')
                 ->alias('record')
                 ->join($types,$types.'.'.$mo.'_id = record.types_id','LEFT')
@@ -575,6 +574,15 @@ class Index extends ApiCommon
                 ->order('create_time desc')
                 ->field('record.*,'.$types.'.name as types_name')
                 ->select();
+        db('admin_record')
+            ->alias('record')
+            ->join($types,$types.'.'.$mo.'_id = record.types_id','LEFT')
+            ->page($param['page'], $param['limit'])
+            ->where($where)
+            ->order('create_time desc')
+            ->field('record.*,'.$types.'.name as types_name')
+            ->getLastSql();
+        die();
         $dataCount = db('admin_record')
                    ->alias('record')
                    ->where($where)
