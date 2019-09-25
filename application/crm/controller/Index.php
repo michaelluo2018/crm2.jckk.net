@@ -575,18 +575,10 @@ class Index extends ApiCommon
                 ->order('create_time desc')
                 ->field('record.*,'.$types.'.name as types_name')
                 ->select();
-        echo db('admin_record')
-            ->alias('record')
-            ->join($types,$types.'.'.$mo.'_id = record.types_id','LEFT')
-            ->page($param['page'], $param['limit'])
-            ->where($where)
-            ->order('create_time desc')
-            ->field('record.*,'.$types.'.name as types_name')->getLastSql();
         $dataCount = db('admin_record')
                    ->alias('record')
                    ->where($where)
                    ->count();
-        halt($list);
         foreach ($list as $k=>$v) {
             $create_user_info = isset($v['create_user_id']) ? $userModel->getUserById($v['create_user_id']) : [];
             $list[$k]['create_user_info'] = $create_user_info;
