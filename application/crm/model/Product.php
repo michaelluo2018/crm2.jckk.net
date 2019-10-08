@@ -236,7 +236,7 @@ class Product extends Common
    	}
 
 	/**
-     * 相关产品创建（商机、合同相关产品数据）
+     * 相关产品创建（项目、合同相关产品数据）
      * @param  types 类型
      * @param  param['product'] 产品相关数据
      * @param  price 产品单价

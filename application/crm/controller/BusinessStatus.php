@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------
-// | Description: 商机组设置
+// | Description: 项目组设置
 // +----------------------------------------------------------------------
 // | 
 // +----------------------------------------------------------------------
@@ -42,7 +42,7 @@ class BusinessStatus extends ApiCommon
     } 
 
     /**
-     * 商机组列表
+     * 项目组列表
      * @author Michael_xu
      * @return 
      */
@@ -55,7 +55,7 @@ class BusinessStatus extends ApiCommon
     }
 
     /**
-     * 添加商机组
+     * 添加项目组
      * @author Michael_xu
      * @param 
      * @return 
@@ -76,7 +76,7 @@ class BusinessStatus extends ApiCommon
     }
 
     /**
-     * 商机组详情
+     * 项目组详情
      * @author Michael_xu
      * @param  
      * @return 
@@ -93,7 +93,7 @@ class BusinessStatus extends ApiCommon
     }
 
     /**
-     * 编辑商机组
+     * 编辑项目组
      * @author Michael_xu
      * @param 
      * @return 
@@ -113,7 +113,7 @@ class BusinessStatus extends ApiCommon
     }
 
     /**
-     * 商机组（停用）
+     * 项目组（停用）
      * @author Michael_xu
      * @param status 1启用, 0停用
      * @return 
@@ -134,7 +134,7 @@ class BusinessStatus extends ApiCommon
     }
 
     /**
-     * 删除商机组
+     * 删除项目组
      * @author Michael_xu
      * @param status 1启用, 0停用
      * @return 

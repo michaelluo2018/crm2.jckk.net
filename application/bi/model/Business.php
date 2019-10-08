@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------
-// | Description: 商机
+// | Description: 项目
 // +----------------------------------------------------------------------
 // | 
 // +----------------------------------------------------------------------
@@ -19,7 +19,7 @@ class Business extends Common
 	protected $name = 'crm_business';
 
 	/**
-     * [getDataCount 商机count]
+     * [getDataCount 项目count]
      * @author Michael_xu
      * @param
      * @return
@@ -33,7 +33,7 @@ class Business extends Common
     }
 
     /**
-     * [getDataMoney 商机金额]
+     * [getDataMoney 项目金额]
      * @author Michael_xu
      * @param
      * @return
@@ -46,7 +46,7 @@ class Business extends Common
     }
 
     /**
-     * 获取商机list
+     * 获取项目list
      * @author zhi
      * @param 
      * @return

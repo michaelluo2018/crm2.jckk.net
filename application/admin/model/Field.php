@@ -524,7 +524,7 @@ class Field extends Model
 		            'value' => []
 				];
 			}
-			//商机、合同下产品
+			//项目、合同下产品
 			if (in_array($param['types'],['crm_business','crm_contract'])) {
 				$new_field_list[] = [
 					'field' => 'product',
@@ -621,7 +621,7 @@ class Field extends Model
 				        $value = $categoryModel->getDataList('tree');
 					}
 				} elseif ($v['form_type'] == 'business_type') {
-					//商机状态组
+					//项目状态组
 					$businessStatusModel = new \app\crm\model\BusinessStatus();
 					$userInfo = $userModel->getUserById($user_id);
 				    $setting = db('crm_business_type')
@@ -638,7 +638,7 @@ class Field extends Model
 						$value = (int)$dataInfo[$v['field']] ? : '';
 					}
 				} elseif ($v['form_type'] == 'business_status') {
-					//商机阶段
+					//项目阶段
 					if ($param['action'] == 'read') {
 						$value = $dataInfo[$v['field']] ? db('crm_business_status')->where(['status_id' => $dataInfo[$v['field']]])->value('name') : '';
 					} else {
@@ -758,7 +758,7 @@ class Field extends Model
 			if ($v['form_type'] == 'category') {
 				
 			} elseif ($v['form_type'] == 'business_type') {
-				//商机状态组
+				//项目状态组
 				$businessStatusModel = new \app\crm\model\BusinessStatus();
 				$userInfo = $userModel->getUserById($user_id);
 			    $setting = db('crm_business_type')

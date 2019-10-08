@@ -329,7 +329,7 @@ class Log extends Common
 		}
 		
 		$relation = Db::name('OaLogRelation')->where('log_id ='.$id)->find();
-		$BusinessModel = new \app\crm\model\Business(); //商机
+		$BusinessModel = new \app\crm\model\Business(); //项目
 		$dataInfo['businessList'] = $relation['business_ids'] ? $BusinessModel->getDataByStr($relation['business_ids']) : [];
 		$ContactsModel = new \app\crm\model\Contacts();//联系人
 		$dataInfo['contactsList'] = $relation['contacts_ids'] ? $ContactsModel->getDataByStr($relation['contacts_ids']) : [];

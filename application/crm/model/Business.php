@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------
-// | Description: 商机
+// | Description: 项目
 // +----------------------------------------------------------------------
 // | 
 // +----------------------------------------------------------------------
@@ -23,7 +23,7 @@ class Business extends Common
 	protected $autoWriteTimestamp = true;
 
 	/**
-     * [getDataList 商机list]
+     * [getDataList 项目list]
      * @author Michael_xu
      * @param     [string]                   $map [查询条件]
      * @param     [number]                   $page     [当前页数]
@@ -60,7 +60,7 @@ class Business extends Common
 		}
 		if ($search) {
 			//普通筛选
-			$sceneMap['name'] = ['condition' => 'contains','value' => $search,'form_type' => 'text','name' => '商机名称'];
+			$sceneMap['name'] = ['condition' => 'contains','value' => $search,'form_type' => 'text','name' => '项目名称'];
 		}
 		if (isset($requestMap['type_id'])) {
 			$requestMap['type_id']['value'] = $requestMap['type_id']['type_id'];
@@ -111,7 +111,7 @@ class Business extends Common
 			    };
 		    }
 		}
-		//联系人商机
+		//联系人项目
 		if ($contacts_id) {
 			$business_id = Db::name('crm_contacts_business')->where(['contacts_id' => $contacts_id])->column('business_id');
 			if ($business_id) {
@@ -168,7 +168,7 @@ class Business extends Common
         	}
 
         	$list[$k]['status_id_info'] = $statusInfo['name'];//销售阶段
-        	$list[$k]['type_id_info'] = db('crm_business_type')->where('type_id',$v['type_id'])->value('name');//商机状态组 
+        	$list[$k]['type_id_info'] = db('crm_business_type')->where('type_id',$v['type_id'])->value('name');//项目状态组 
         	//进度
         	$list[$k]['status_progress'] = [$statusInfo['order_id'], $status_count+1];
 			//权限
@@ -194,7 +194,7 @@ class Business extends Common
     }
 
 	/**
-	 * 创建商机主表信息
+	 * 创建项目主表信息
 	 * @author Michael_xu
 	 * @param  
 	 * @return                            
@@ -234,13 +234,13 @@ class Business extends Common
 		        	return false;
 		        }		       
  		    }
-			//添加商机日志
+			//添加项目日志
 			$data_log['business_id'] = $business_id;
 			$data_log['is_end'] = 0;
 			$data_log['status_id'] = $param['status_id'];
 			$data_log['create_time'] = time();
 			$data_log['owner_user_id'] = $param['owner_user_id'];
-			$data_log['remark'] = '新建商机';
+			$data_log['remark'] = '新建项目';
 			Db::name('CrmBusinessLog')->insert($data_log);
 			
 			$data = [];
@@ -253,7 +253,7 @@ class Business extends Common
 	}
 
 	/**
-	 * 编辑商机主表信息
+	 * 编辑项目主表信息
 	 * @author Michael_xu
 	 * @param  
 	 * @return                            
@@ -292,7 +292,7 @@ class Business extends Common
 
 		$param['money'] = $param['money'] ? : '0.00';
 		$param['discount_rate'] = $param['discount_rate'] ? : '0.00';
-		//商机状态改变
+		//项目状态改变
 		$statusInfo = db('crm_business_status')->where(['status_id' => $param['status_id']])->find();
 		if ($statusInfo['type_id']) {
 			$param['is_end'] = 0;
@@ -315,8 +315,8 @@ class Business extends Common
 	}
 
 	/**
-     * 商机数据
-     * @param  $id 商机ID
+     * 项目数据
+     * @param  $id 项目ID
      * @return 
      */	
    	public function getDataById($id = '')
@@ -347,7 +347,7 @@ class Business extends Common
 	}
 	
 	/**
-     * [商机漏斗]
+     * [项目漏斗]
      * @author Michael_xu
      * @param
      * @return                   
@@ -363,7 +363,7 @@ class Business extends Common
         $where['owner_user_id'] = array('in',$userIds);
         $where['create_time'] = array('between',$between_time);
 
-		//商机状态组
+		//项目状态组
 		$default_type_id = db('crm_business_type')->order('type_id asc')->value('type_id');
 		$type_id = $request['type_id'] ? $request['type_id'] : $default_type_id;
 		$statusList = db('crm_business_status')->where(['type_id' => $type_id])->select();
@@ -383,7 +383,7 @@ class Business extends Common
 			$where['status_id'] = $v['status_id'];
 			$statusList[$k]['status_name'] = $v['name'];
 			$statusList[$k]['count'] = db('crm_business')->where($where)->count(); 
-			$statusList[$k]['money'] = db('crm_business')->where($where)->sum('money'); //商机金额
+			$statusList[$k]['money'] = db('crm_business')->where($where)->sum('money'); //项目金额
 			$sum_money += $statusList[$k]['money'];
 		}
 		$data['list'] = $statusList;
@@ -394,9 +394,9 @@ class Business extends Common
     } 
 
 	/**
-     * [商机转移]
+     * [项目转移]
      * @author Michael_xu
-     * @param ids 商机ID数组
+     * @param ids 项目ID数组
      * @param owner_user_id 变更负责人
      * @param is_remove 1移出，2转为团队成员
      * @return            
@@ -420,7 +420,7 @@ class Business extends Common
 	        $data['owner_user_id'] = $owner_user_id;
 	        $data['update_time'] = time(); 
 			if (!db('crm_business')->where(['business_id' => $id])->update($data)) {
-	            $errorMessage[] = '商机：'.$businessInfo['name'].'"转移失败，错误原因：数据出错；';
+	            $errorMessage[] = '项目：'.$businessInfo['name'].'"转移失败，错误原因：数据出错；';
 	            continue;
 	        }
     	}

@@ -64,7 +64,7 @@ class Contacts extends ApiCommon
         $param['owner_user_id'] = $userInfo['id'];
         
         if ($data = $contactsModel->createData($param)) {
-            //关联 联系人与商机  客户添加与商机添加联系人可共用此接口
+            //关联 联系人与项目  客户添加与项目添加联系人可共用此接口
             $business_id = $param['business_id']?$param['business_id']:0;
             if($business_id != 0){
                 $data['cancel_or_relation'] = 1;// 1:关联 0取消
@@ -313,7 +313,7 @@ class Contacts extends ApiCommon
     }  
 
     /**
-     * 联系人  关联/取消关联  商机
+     * 联系人  关联/取消关联  项目
      * @return [type] [description]
      */
     public function relation()
@@ -325,7 +325,7 @@ class Contacts extends ApiCommon
         $res = 1;
         if ($param['is_relation'] == 1) {//关联
             $data = [];
-            if (is_array($param['contacts_id'])) {//商机关联联系人
+            if (is_array($param['contacts_id'])) {//项目关联联系人
                 foreach ($param['contacts_id'] as $key => $value) {
                     $data['contacts_id'] = $value;
                     $data['business_id'] = $param['business_id'];
@@ -336,7 +336,7 @@ class Contacts extends ApiCommon
                         }
                     }
                 }
-            } else {//联系人关联商机
+            } else {//联系人关联项目
                 foreach ($param['business_id'] as $key => $value) {
                     $data['business_id'] = $value;
                     $data['contacts_id'] = $param['contacts_id'];

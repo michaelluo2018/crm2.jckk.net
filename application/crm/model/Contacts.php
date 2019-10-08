@@ -94,7 +94,7 @@ class Contacts extends Common
 	    $auth_user_ids = array_merge(array_unique(array_filter($auth_user_ids))) ? : ['-1'];
 	    //负责人、相关团队
 	    $authMap['contacts.owner_user_id'] = ['in',$auth_user_ids];		
-		//联系人商机
+		//联系人项目
 		if ($business_id) {
 			$contacts_id = Db::name('crm_contacts_business')->where(['business_id' => $business_id])->column('contacts_id');
 			if ($contacts_id) {
